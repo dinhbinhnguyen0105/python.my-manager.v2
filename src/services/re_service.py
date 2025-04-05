@@ -7,7 +7,10 @@ from src import constants
 
 
 class REProductService:
-    pass
+    @staticmethod
+    def create(data):
+        query = QSqlQuery()
+        query.prepare()
 
 
 class RESettingService:
