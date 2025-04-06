@@ -1,4 +1,6 @@
 RE_PRODUCT_TABLE = "rep_table"
+
+RE_SETTING_STATUS_TABLE = "re_setting_status_table"
 RE_SETTING_PROVINCES_TABLE = "re_setting_provinces_table"
 RE_SETTING_DISTRICTS_TABLE = "re_setting_districts_table"
 RE_SETTING_WARDS_TABLE = "re_setting_wards_table"

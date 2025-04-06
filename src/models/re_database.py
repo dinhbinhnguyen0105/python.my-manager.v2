@@ -14,6 +14,12 @@ def initialize_re_products():
     if not _init_re(query):
         db.close()
         return False
+    statuses = [
+        {"label_vi": "sẵn có", "label_en": "available", "value": "available"},
+        {"label_vi": "không sẵn có", "label_en": "unavailable", "value": "unavailable"},
+        {"label_vi": "đã ngừng", "label_en": "discontinued", "value": "discontinued"},
+        {"label_vi": "sắp có", "label_en": "coming soon", "value": "coming_soon"},
+    ]
     provinces = [{"label_vi": "lâm đồng",
                   "label_en": "lam dong", "value": "lam_dong"}]
     districts = [
@@ -79,6 +85,9 @@ def initialize_re_products():
         {"label_vi": "đầy đủ nội thất", "label_en": "full", "value": "full"},
     ]
 
+    if not _init_deps(query, constants.RE_SETTING_STATUS_TABLE, statuses):
+        db.close()
+        return False
     if not _init_deps(query, constants.RE_SETTING_PROVINCES_TABLE, provinces):
         db.close()
         return False
@@ -108,27 +117,47 @@ def initialize_re_products():
     return True
 
 
+# pid
+# province_id
+# district_id
+# ward_id
+# option_id
+# category_id
+# building_line_id
+# furniture_id
+# legal_id
+# area
+# structure
+# function
+# description
+# price
+# image_dir
+# updated_at
+
 def _init_re(query):
     query.exec(f"""
                CREATE TABLE IF NOT EXISTS {constants.RE_PRODUCT_TABLE} (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 pid TEXT UNIQUE NOT NULL,
+                status_id INTEGER,
+                option_id INTEGER,
+                ward_id INTEGER,
+                street TEXT,
+                category_id INTEGER,
+                area REAL,
+                price REAL,
+                legal_id INTEGER,
                 province_id INTEGER,
                 district_id INTEGER,
-                ward_id INTEGER,
-                option_id INTEGER,
-                category_id INTEGER,
-                building_line_id INTEGER,
-                furniture_id INTEGER,
-                legal_id INTEGER,
-                area REAL,
                 structure REAL,
                 function TEXT,
+                building_line_id INTEGER,
+                furniture_id INTEGER,
                 description TEXT,
-                price REAL,
-                status INTEGER DEFAULT 1,
+                image_dir TEXT,
                 created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
                 updated_at TEXT,
+                FOREIGN KEY (status_id) REFERENCES {constants.RE_SETTING_STATUS_TABLE}(id),
                 FOREIGN KEY (province_id) REFERENCES {constants.RE_SETTING_PROVINCES_TABLE}(id),
                 FOREIGN KEY (district_id) REFERENCES {constants.RE_SETTING_DISTRICTS_TABLE}(id),
                 FOREIGN KEY (ward_id) REFERENCES {constants.RE_SETTING_WARDS_TABLE}(id),
@@ -152,8 +181,7 @@ def _init_deps(query, table_name, fields):
                label_vi TEXT,
                label_en TEXT,
                value TEXT UNIQUE NOT NULL,
-               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
-               updated_at TEXT,
+               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
                )""")
     if query.lastError().isValid():
         print(
