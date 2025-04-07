@@ -19,8 +19,7 @@ class REProductController(QObject):
 
     def _initialize_mapper(self):
         self.mapper.setModel(self.model)
-        self.mapper.setSubmitPolicy(
-            QDataWidgetMapper.SubmitPolicy.ManualSubmit)
+        self.mapper.setSubmitPolicy(QDataWidgetMapper.SubmitPolicy.ManualSubmit)
         self.mapper.currentIndexChanged.connect(self._on_current_index_changed)
         self.load_data()
 
@@ -49,11 +48,11 @@ class REProductController(QObject):
                 return True
             else:
                 QMessageBox.critical(
-                    None, "Error", f"Database error: {self.model.lastError().text()}")
+                    None, "Error", f"Database error: {self.model.lastError().text()}"
+                )
                 return False
         else:
-            QMessageBox.warning(
-                None, "Warning", "Could not submit changes from UI.")
+            QMessageBox.warning(None, "Warning", "Could not submit changes from UI.")
             return False
 
     @staticmethod
@@ -87,47 +86,58 @@ class REProductController(QObject):
         if not data.get("pid"):
             QMessageBox.critical(None, "Error", "Invalid pid.")
             return False
-        if not isinstance(data.get("area"), (int, float)) or \
-           not isinstance(data.get("structure"), (int, float)) or \
-           not isinstance(data.get("price"), (int, float)):
+        if (
+            not isinstance(data.get("area"), (int, float))
+            or not isinstance(data.get("structure"), (int, float))
+            or not isinstance(data.get("price"), (int, float))
+        ):
             QMessageBox.critical(
-                None, "Error", "Area, structure, and price must be numbers.")
+                None, "Error", "Area, structure, and price must be numbers."
+            )
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_STATUS_TABLE, data.get("status_id")):
+            constants.RE_SETTING_STATUS_TABLE, data.get("status_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid status selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_PROVINCES_TABLE, data.get("province_id")):
+            constants.RE_SETTING_PROVINCES_TABLE, data.get("province_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid province selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_DISTRICTS_TABLE, data.get("district_id")):
+            constants.RE_SETTING_DISTRICTS_TABLE, data.get("district_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid district selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_WARDS_TABLE, data.get("ward_id")):
+            constants.RE_SETTING_WARDS_TABLE, data.get("ward_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid ward selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_OPTIONS_TABLE, data.get("option_id")):
+            constants.RE_SETTING_OPTIONS_TABLE, data.get("option_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid option selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_CATEGORIES_TABLE, data.get("category_id")):
+            constants.RE_SETTING_CATEGORIES_TABLE, data.get("category_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid category selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_BUILDING_LINES_TABLE, data.get("building_line_id")):
-            QMessageBox.critical(
-                None, "Error", "Invalid building_line selected.")
+            constants.RE_SETTING_BUILDING_LINES_TABLE, data.get("building_line_id")
+        ):
+            QMessageBox.critical(None, "Error", "Invalid building_line selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_FURNITURES_TABLE, data.get("furniture_id")):
+            constants.RE_SETTING_FURNITURES_TABLE, data.get("furniture_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid furniture selected.")
             return False
         if not RESettingService.check_exist_id(
-                constants.RE_SETTING_LEGALS_TABLE, data.get("legal_id")):
+            constants.RE_SETTING_LEGALS_TABLE, data.get("legal_id")
+        ):
             QMessageBox.critical(None, "Error", "Invalid legal selected.")
             return False
         return True
@@ -154,7 +164,8 @@ class REProductController(QObject):
                 return True
             else:
                 QMessageBox.critical(
-                    None, "Error", "Failed to create new real estate product.")
+                    None, "Error", "Failed to create new real estate product."
+                )
                 return False
 
         except Exception as e:
@@ -195,8 +206,7 @@ class REProductController(QObject):
                 )
                 return True
             else:
-                QMessageBox.warning(
-                    None, "Warning", "Failed to update product.")
+                QMessageBox.warning(None, "Warning", "Failed to update product.")
                 return False
         except Exception as e:
             QMessageBox.critical(None, "Error", str(e))
@@ -211,8 +221,7 @@ class REProductController(QObject):
                 )
                 return True
             else:
-                QMessageBox.warning(
-                    None, "Warning", "Failed to delete product.")
+                QMessageBox.warning(None, "Warning", "Failed to delete product.")
                 return False
         except Exception as e:
             QMessageBox.critical(None, "Error", str(e))
@@ -222,6 +231,10 @@ class REProductController(QObject):
     def get_image_paths(record_id):
         return REProductService.get_images_in_directory(record_id)
 
+    @staticmethod
+    def get_columns():
+        return REProductService.get_columns()
+
 
 class RESettingController(QObject):
     def __init__(self, table_name, parent=None):
@@ -229,17 +242,13 @@ class RESettingController(QObject):
         self.table_name = table_name
         self.model = BaseSettingModel(self.table_name)
 
-    def refresh_data(self):
-        self.model.select()
-
     def create_new(self, data: dict):
         try:
             record_id = RESettingService.create(self.table_name, data)
             if record_id:
-                self.refresh_data()
+                self.model.select()
             else:
-                QMessageBox.critical(
-                    None, "Error", "Failed to create new record.")
+                QMessageBox.critical(None, "Error", "Failed to create new record.")
         except Exception as e:
             error_msg = f"Error creating new record: {e}"
             QMessageBox.critical(None, "Error", error_msg)
@@ -255,10 +264,11 @@ class RESettingController(QObject):
     def update(self, record_id: int, data: dict):
         try:
             if RESettingService.update(self.table_name, record_id, data):
-                self.refresh_data()
+                self.model.select()
             else:
                 QMessageBox.critical(
-                    None, "Error", f"Failed to update record with ID: {record_id}.")
+                    None, "Error", f"Failed to update record with ID: {record_id}."
+                )
         except Exception as e:
             error_msg = f"Error updating record: {e}"
             QMessageBox.critical(None, "Error", error_msg)
@@ -266,10 +276,11 @@ class RESettingController(QObject):
     def delete(self, record_id: int):
         try:
             if RESettingService.delete(self.table_name, record_id):
-                self.refresh_data()
+                self.model.select()
             else:
                 QMessageBox.critical(
-                    None, "Error", f"Failed to delete record with ID: {record_id}.")
+                    None, "Error", f"Failed to delete record with ID: {record_id}."
+                )
         except Exception as e:
             error_msg = f"Error deleting record: {e}"
             QMessageBox.critical(None, "Error", error_msg)
@@ -298,3 +309,8 @@ class RESettingController(QObject):
         except Exception as e:
             error_msg = f"Error fetching id: {e}"
             QMessageBox.critical(None, "Error", error_msg)
+
+
+class RETemplateController(RESettingController):
+    def __init__(self, table_name, parent=None):
+        super().__init__(table_name, parent)

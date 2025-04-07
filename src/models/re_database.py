@@ -14,14 +14,16 @@ def initialize_re_products():
     if not _init_re(query):
         db.close()
         return False
+    if not _init_template(query):
+        db.close()
+        return False
     statuses = [
         {"label_vi": "sẵn có", "label_en": "available", "value": "available"},
         {"label_vi": "không sẵn có", "label_en": "unavailable", "value": "unavailable"},
         {"label_vi": "đã ngừng", "label_en": "discontinued", "value": "discontinued"},
         {"label_vi": "sắp có", "label_en": "coming soon", "value": "coming_soon"},
     ]
-    provinces = [{"label_vi": "lâm đồng",
-                  "label_en": "lam dong", "value": "lam_dong"}]
+    provinces = [{"label_vi": "lâm đồng", "label_en": "lam dong", "value": "lam_dong"}]
     districts = [
         {"label_vi": "đà lạt", "label_en": "da lat", "value": "da_lat"},
     ]
@@ -38,10 +40,17 @@ def initialize_re_products():
         {"label_vi": "phường 10", "label_en": "ward 10", "value": "10"},
         {"label_vi": "phường 11", "label_en": "ward 11", "value": "11"},
         {"label_vi": "phường 12", "label_en": "ward 12", "value": "12"},
-        {"label_vi": "xã trạm hành", "label_en": "ward tram hanh", "value": "tram_hanh"},
+        {
+            "label_vi": "xã trạm hành",
+            "label_en": "ward tram hanh",
+            "value": "tram_hanh",
+        },
         {"label_vi": "xã tà nung", "label_en": "ward ta nung", "value": "ta_nung"},
-        {"label_vi": "xã xuân trường",
-            "label_en": "ward xuan truong", "value": "xuan_truong"},
+        {
+            "label_vi": "xã xuân trường",
+            "label_en": "ward xuan truong",
+            "value": "xuan_truong",
+        },
         {"label_vi": "xã xuân thọ", "label_en": "ward xuan tho", "value": "xuan_tho"},
     ]
     options = [
@@ -54,14 +63,16 @@ def initialize_re_products():
         {"label_vi": "nhà mặt tiền", "label_en": "shop house", "value": "shop_house"},
         {"label_vi": "biệt thự", "label_en": "villa", "value": "villa"},
         {"label_vi": "đất nền", "label_en": "land", "value": "land"},
-        {"label_vi": "căn hộ/ chung cư",
-            "label_en": "apartment", "value": "apartment"},
+        {"label_vi": "căn hộ/ chung cư", "label_en": "apartment", "value": "apartment"},
         {"label_vi": "homestay", "label_en": "homestay", "value": "homestay"},
         {"label_vi": "khách sạn", "label_en": "hotel", "value": "hotel"},
         {"label_vi": "kho/bãi", "label_en": "workshop", "value": "workshop"},
         {"label_vi": "MBKD", "label_en": "retail space", "value": "retail_space"},
-        {"label_vi": "coffee house", "label_en": "coffee house",
-            "value": "coffee_house"},
+        {
+            "label_vi": "coffee house",
+            "label_en": "coffee house",
+            "value": "coffee_house",
+        },
         {"label_vi": "nhà hàng", "label_en": "restaurant", "value": "restaurant"},
     ]
     building_lines = [
@@ -71,12 +82,14 @@ def initialize_re_products():
     legals = [
         {"label_vi": "giấy tờ tay", "label_en": "none", "value": "none"},
         {"label_vi": "sổ nông nghiệp chung", "label_en": "snnc", "value": "snnc"},
-        {"label_vi": "sổ nông nghiệp phân quyền",
-            "label_en": "snnpq", "value": "snnpq"},
+        {
+            "label_vi": "sổ nông nghiệp phân quyền",
+            "label_en": "snnpq",
+            "value": "snnpq",
+        },
         {"label_vi": "sổ nông nghiệp riêng", "label_en": "snnr", "value": "snnr"},
         {"label_vi": "sổ xây dựng chung", "label_en": "sxdc", "value": "sxdc"},
-        {"label_vi": "sổ xây dựng phân quyền",
-            "label_en": "sxdpq", "value": "sxdpq"},
+        {"label_vi": "sổ xây dựng phân quyền", "label_en": "sxdpq", "value": "sxdpq"},
         {"label_vi": "sổ xây dựng riêng", "label_en": "sxdr", "value": "sxdr"},
     ]
     furnitures = [
@@ -117,25 +130,9 @@ def initialize_re_products():
     return True
 
 
-# pid
-# province_id
-# district_id
-# ward_id
-# option_id
-# category_id
-# building_line_id
-# furniture_id
-# legal_id
-# area
-# structure
-# function
-# description
-# price
-# image_dir
-# updated_at
-
 def _init_re(query):
-    query.exec(f"""
+    query.exec(
+        f"""
                CREATE TABLE IF NOT EXISTS {constants.RE_PRODUCT_TABLE} (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 pid TEXT UNIQUE NOT NULL,
@@ -167,37 +164,74 @@ def _init_re(query):
                 FOREIGN KEY (furniture_id) REFERENCES {constants.RE_SETTING_FURNITURES_TABLE}(id),
                 FOREIGN KEY (legal_id) REFERENCES {constants.RE_SETTING_LEGALS_TABLE}(id)
                )
-               """)
+               """
+    )
     if query.lastError().isValid():
         print(
-            f"Error creating table '{constants.RE_PRODUCT_TABLE}': {query.lastError().text()}")
+            f"Error creating table '{constants.RE_PRODUCT_TABLE}': {query.lastError().text()}"
+        )
         return False
     return True
 
 
 def _init_deps(query, table_name, fields):
-    query.exec(f"""CREATE TABLE IF NOT EXISTS {table_name} (
+    query.exec(
+        f"""CREATE TABLE IF NOT EXISTS {table_name} (
                id INTEGER PRIMARY KEY AUTOINCREMENT,
                label_vi TEXT,
                label_en TEXT,
                value TEXT UNIQUE NOT NULL,
                created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
-               )""")
+               )"""
+    )
     if query.lastError().isValid():
-        print(
-            f"Error creating table '{table_name}': {query.lastError().text()}")
+        print(f"Error creating table '{table_name}': {query.lastError().text()}")
         return False
-    query.prepare(f"""
+    query.prepare(
+        f"""
                   INSERT OR IGNORE INTO {table_name}(label_vi, label_en, value)
                   VALUES (:label_vi, :label_en, :value)
-                  """)
+                  """
+    )
     for field in fields:
         query.bindValue(":label_vi", field.get("label_vi", ""))
         query.bindValue(":label_en", field.get("label_en", ""))
         query.bindValue(":value", field.get("value", ""))
         if not query.exec():
-            print(
-                f"Error inserting into '{table_name}': {query.lastError().text()}")
+            print(f"Error inserting into '{table_name}': {query.lastError().text()}")
             return False
 
     return True
+
+
+def _init_template(query: QSqlQuery):
+    query.exec(
+        f"""CREATE TABLE IF NOT EXISTS {constants.RE_TEMPLATE_TITLE_TABLE} (
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               tid TEXT UNIQUE,
+               option TEXT,
+               value TEXT,
+               updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
+               """
+    )
+    if query.lastError().isValid():
+        print(
+            f"Error creating table '{constants.RE_TEMPLATE_TITLE_TABLE}': {query.lastError().text()}"
+        )
+        return False
+    query.exec(
+        f"""CREATE TABLE IF NOT EXISTS {constants.RE_TEMPLATE_DESCRIPTION_TABLE} (
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               tid TEXT UNIQUE,
+               option TEXT,
+               value TEXT,
+               updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
+               """
+    )
+    if query.lastError().isValid():
+        print(
+            f"Error creating table '{constants.RE_TEMPLATE_DESCRIPTION_TABLE}': {query.lastError().text()}"
+        )
+        return False

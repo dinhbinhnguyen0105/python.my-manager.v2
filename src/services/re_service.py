@@ -54,15 +54,16 @@ def validate_foreign_keys(data):
             query.bindValue(":id", value)
             if not query.exec():
                 raise Exception(
-                    f"Error executing validation query for {field}: {query.lastError().text()}")
+                    f"Error executing validation query for {field}: {query.lastError().text()}"
+                )
             if query.next():
                 count = query.value(0)
                 if count == 0:
                     raise Exception(
-                        f"Validation failed: {field} value '{value}' does not exist in the table '{table}'")
+                        f"Validation failed: {field} value '{value}' does not exist in the table '{table}'"
+                    )
             else:
-                raise Exception(
-                    f"Error retrieving result for validation of {field}.")
+                raise Exception(f"Error retrieving result for validation of {field}.")
     return True
 
 
@@ -80,7 +81,8 @@ class REProductService:
                 db.rollback()
                 raise e_validate
             query = QSqlQuery()
-            query.prepare(f"""
+            query.prepare(
+                f"""
             INSERT INTO {constants.RE_PRODUCT_TABLE} (
                 pid, province_id, district_id, ward_id, street,
                 option_id, category_id, building_line_id, 
@@ -92,12 +94,21 @@ class REProductService:
                 :furniture_id, :legal_id, :area, :structure,
                 :function, :description, :price, :status_id, :image_dir, :updated_at
             )
-        """)
+        """
+            )
             now = datetime.datetime.now()
             formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
             data.setdefault("updated_at", formatted_time)
-            img_dir_default = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), "..", "repositories", "images", "re", data.get("pid")))
+            img_dir_default = os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    "..",
+                    "repositories",
+                    "images",
+                    "re",
+                    data.get("pid"),
+                )
+            )
             data.setdefault("image_dir", img_dir_default)
             for key in REProductService.get_columns():
                 if key != "id":
@@ -105,13 +116,10 @@ class REProductService:
 
             if not query.exec():
                 db.rollback()
-                raise Exception(
-                    f"Error inserting record: {query.lastError().text()}")
+                raise Exception(f"Error inserting record: {query.lastError().text()}")
 
             if not copy_files(
-                data.get("image_paths", []),
-                data.get("image_dir"),
-                data.get("pid")
+                data.get("image_paths", []), data.get("image_dir"), data.get("pid")
             ):
                 db.rollback()
                 raise Exception("Failed to copy all image files.")
@@ -128,7 +136,8 @@ class REProductService:
     def read(record_id):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"""
+        query.prepare(
+            f"""
                    SELECT
                     tp.id,
                     tp.pid,
@@ -160,7 +169,8 @@ class REProductService:
                 LEFT JOIN {constants.RE_SETTING_FURNITURES_TABLE} ts_furniture ON tp.furniture_id = ts_furniture.id
                 LEFT JOIN {constants.RE_SETTING_LEGALS_TABLE} ts_legal ON tp.legal_id = ts_legal.id
                    WHERE tp.id=:id
-                   """)
+                   """
+        )
         query.bindValue(":id", record_id)
         if not query.exec():
             raise Exception(
@@ -173,8 +183,9 @@ class REProductService:
                 field_name = record.fieldName(i)
                 field_value = record.value(i)
                 data[field_name] = field_value
-            data.setdefault("image_paths", get_images_in_directory(
-                data.get("image_dir")))
+            data.setdefault(
+                "image_paths", get_images_in_directory(data.get("image_dir"))
+            )
             return data
         return {}
 
@@ -182,7 +193,8 @@ class REProductService:
     def read_all():
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"""
+        query.prepare(
+            f"""
                 SELECT
                     tp.id,
                     tp.pid,
@@ -213,7 +225,8 @@ class REProductService:
                 LEFT JOIN {constants.RE_SETTING_BUILDING_LINES_TABLE} ts_building_line ON tp.building_line_id = ts_building_line.id
                 LEFT JOIN {constants.RE_SETTING_FURNITURES_TABLE} ts_furniture ON tp.furniture_id = ts_furniture.id
                 LEFT JOIN {constants.RE_SETTING_LEGALS_TABLE} ts_legal ON tp.legal_id = ts_legal.id
-                """)
+                """
+        )
         if not query.exec():
             raise Exception(
                 f"Error fetching all real estate products: {query.lastError().text()}"
@@ -227,8 +240,9 @@ class REProductService:
                 field_name = record.fieldName(i)
                 field_value = query.value(i)
                 data[field_name] = field_value
-            data.setdefault("image_paths", get_images_in_directory(
-                data.get("image_dir")))
+            data.setdefault(
+                "image_paths", get_images_in_directory(data.get("image_dir"))
+            )
             results.append(data)
 
         return results
@@ -264,7 +278,8 @@ class REProductService:
             if not query.exec():
                 db.rollback()
                 raise Exception(
-                    f"Error updating record with id [{record_id}]: {query.lastError().text()}")
+                    f"Error updating record with id [{record_id}]: {query.lastError().text()}"
+                )
 
             if not db.commit():
                 db.rollback()
@@ -284,16 +299,19 @@ class REProductService:
             product_data = REProductService.read(record_id)
             image_dir = product_data.get("image_dir")
             query = QSqlQuery()
-            query.prepare(f"""
+            query.prepare(
+                f"""
                 DELETE FROM {constants.RE_PRODUCT_TABLE}
                 WHERE id=:id
-            """)
+            """
+            )
             query.bindValue(":id", record_id)
 
             if not query.exec():
                 db.rollback()
                 raise Exception(
-                    f"Error deleting record with id [{record_id}]: {query.lastError().text()}")
+                    f"Error deleting record with id [{record_id}]: {query.lastError().text()}"
+                )
 
             if image_dir and os.path.exists(image_dir):
                 try:
@@ -302,7 +320,8 @@ class REProductService:
                     #     f"Deleted associated image directory for id [{record_id}]: {image_dir}")
                 except Exception as e:
                     print(
-                        f"Error deleting image directory {image_dir} for id [{record_id}]: {e}")
+                        f"Error deleting image directory {image_dir} for id [{record_id}]: {e}"
+                    )
 
             if not db.commit():
                 db.rollback()
@@ -336,11 +355,13 @@ class REProductService:
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
         query.prepare(
-            f"SELECT image_dir FROM {constants.RE_PRODUCT_TABLE} WHERE id = :id")
+            f"SELECT image_dir FROM {constants.RE_PRODUCT_TABLE} WHERE id = :id"
+        )
         query.bindValue(":id", id)
         if not query.exec():
             raise Exception(
-                f"Error executing query to fetch image directory for product ID [{id}]: {query.lastError().text()}")
+                f"Error executing query to fetch image directory for product ID [{id}]: {query.lastError().text()}"
+            )
 
         if query.next():
             image_dir = query.value(0)
@@ -359,8 +380,7 @@ class REProductService:
             raise Exception("Database is not open or valid.")
         table_record = database.record(constants.RE_PRODUCT_TABLE)
         if table_record.isEmpty():
-            raise Exception(
-                f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
+            raise Exception(f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
         columns = []
         for i in range(table_record.count()):
             field_name = table_record.fieldName(i)
@@ -391,7 +411,8 @@ class RESettingService:
             if not query.exec():
                 db.rollback()
                 raise Exception(
-                    f"Error inserting into {table_name}: {query.lastError().text()}")
+                    f"Error inserting into {table_name}: {query.lastError().text()}"
+                )
             if not db.commit():
                 db.rollback()
                 raise Exception("Failed to commit transaction.")
@@ -404,14 +425,17 @@ class RESettingService:
     def read(table_name, record_id):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"""
+        query.prepare(
+            f"""
             SELECT * FROM {table_name}
             WHERE id=:id
-        """)
+        """
+        )
         query.bindValue(":id", record_id)
         if not query.exec():
             raise Exception(
-                f"Error fetching from {table_name} with id [{record_id}]: {query.lastError().text()}")
+                f"Error fetching from {table_name} with id [{record_id}]: {query.lastError().text()}"
+            )
         if query.next():
             record = query.record()
             data = {}
@@ -426,12 +450,15 @@ class RESettingService:
     def read_all(table_name):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"""
+        query.prepare(
+            f"""
             SELECT * FROM {table_name}
-        """)
+        """
+        )
         if not query.exec():
             raise Exception(
-                f"Error fetching all from {table_name}: {query.lastError().text()}")
+                f"Error fetching all from {table_name}: {query.lastError().text()}"
+            )
         results = []
         while query.next():
             record = query.record()
@@ -466,7 +493,8 @@ class RESettingService:
             if not query.exec():
                 db.rollback()
                 raise Exception(
-                    f"Error updating {table_name} with id [{record_id}]: {query.lastError().text()}")
+                    f"Error updating {table_name} with id [{record_id}]: {query.lastError().text()}"
+                )
             if not db.commit():
                 db.rollback()
                 raise Exception("Failed to commit transaction.")
@@ -482,15 +510,18 @@ class RESettingService:
             raise Exception("Failed to start transaction.")
         try:
             query = QSqlQuery()
-            query.prepare(f"""
+            query.prepare(
+                f"""
                 DELETE FROM {table_name}
                 WHERE id=:id
-            """)
+            """
+            )
             query.bindValue(":id", record_id)
             if not query.exec():
                 db.rollback()
                 raise Exception(
-                    f"Error deleting from {table_name} with id [{record_id}]: {query.lastError().text()}")
+                    f"Error deleting from {table_name} with id [{record_id}]: {query.lastError().text()}"
+                )
             if not db.commit():
                 db.rollback()
                 raise Exception("Failed to commit transaction.")
@@ -503,14 +534,17 @@ class RESettingService:
     def check_exist_id(table_name, record_id):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"""
+        query.prepare(
+            f"""
             SELECT COUNT(*) FROM {table_name}
             WHERE id=:id
-        """)
+        """
+        )
         query.bindValue(":id", record_id)
         if not query.exec():
             raise Exception(
-                f"Error checking existence in {table_name} for id [{record_id}]: {query.lastError().text()}")
+                f"Error checking existence in {table_name} for id [{record_id}]: {query.lastError().text()}"
+            )
         if query.next():
             count = query.value(0)
             return count > 0
@@ -520,14 +554,177 @@ class RESettingService:
     def get_id_by_value(table_name, value):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"""
+        query.prepare(
+            f"""
             SELECT id FROM {table_name}
             WHERE value=:value
-        """)
+        """
+        )
         query.bindValue(":value", value)
         if not query.exec():
             raise Exception(
-                f"Error fetching from {table_name} with value [{value}]: {query.lastError().text()}")
+                f"Error fetching from {table_name} with value [{value}]: {query.lastError().text()}"
+            )
         if query.next():
             return query.value(0)
         return None
+
+
+class RETemplateService:
+    @staticmethod
+    def read(table_name, id):
+        db = QSqlDatabase.database()
+        query = QSqlQuery(db)
+        query.prepare(f"SELECT * FROM {table_name} WHERE id = :id")
+        query.bindValue(":id", id)
+        if not query.exec():
+            print(
+                f"Error reading from {table_name} with id [{id}]: {query.lastError().text()}"
+            )
+            return None
+        if query.next():
+            row = {}
+            for i in range(query.record().count()):
+                row[query.record().fieldName(i)] = query.value(i)
+            return row
+        return None
+
+    @staticmethod
+    def read_all(table_name):
+        db = QSqlDatabase.database()
+        query = QSqlQuery(db)
+        query.prepare(f"SELECT * FROM {table_name}")
+        if not query.exec():
+            print(f"Error reading all from {table_name}: {query.lastError().text()}")
+            return []
+        results = []
+        while query.next():
+            row = {}
+            for i in range(query.record().count()):
+                row[query.record().fieldName(i)] = query.value(i)
+            results.append(row)
+        return results
+
+    @staticmethod
+    def create(table_name, data):
+        db = QSqlDatabase.database()
+        if not db.transaction():
+            raise Exception("Failed to start transaction.")
+        columns = ", ".join(data.keys())
+        placeholders = ", ".join([f":{key}" for key in data.keys()])
+        try:
+            query = QSqlQuery(db)
+            query.prepare(
+                f"""
+INSERT INTO {table_name} ({columns})
+VALUES ({placeholders})
+                """
+            )
+            for key, value in data.items():
+                query.bindValue(f":{key}", value)
+            if not query.exec():
+                db.rollback()
+                print(f"Error inserting into {table_name}: {query.lastError().text()}")
+                return False
+            if not db.commit():
+                print("Failed to commit transaction.")
+                return False
+            return True
+        except Exception as e:
+            db.rollback()
+            print("ERROR: ", e)
+            return False
+
+    @staticmethod
+    def update(table_name, id, data):
+        db = QSqlDatabase.database()
+        if not db.transaction():
+            raise Exception("Failed to start transaction.")
+        set_clause = ", ".join([f"{key} = :{key}" for key in data.keys()])
+        try:
+            query = QSqlQuery(db)
+            query.prepare(
+                f"""
+UPDATE {table_name}
+SET {set_clause}, updated_at = :updated_at
+WHERE id = :id
+                """
+            )
+            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            query.bindValue(":updated_at", now)
+            query.bindValue(":id", id)
+            for key, value in data.items():
+                query.bindValue(f":{key}", value)
+            if not query.exec():
+                db.rollback()
+                print(
+                    f"Error updating {table_name} with id [{id}]: {query.lastError().text()}"
+                )
+                return False
+            if not db.commit():
+                print("Failed to commit transaction.")
+                return False
+            return True
+        except Exception as e:
+            db.rollback()
+            print("ERROR: ", e)
+            return False
+
+    @staticmethod
+    def delete(table_name, id):
+        db = QSqlDatabase.database()
+        if not db.transaction():
+            raise Exception("Failed to start transaction.")
+        try:
+            query = QSqlQuery(db)
+            query.prepare(f"DELETE FROM {table_name} WHERE id = :id")
+            query.bindValue(":id", id)
+            if not query.exec():
+                db.rollback()
+                print(
+                    f"Error deleting from {table_name} with id [{id}]: {query.lastError().text()}"
+                )
+                return False
+            if not db.commit():
+                print("Failed to commit transaction.")
+                return False
+            return True
+        except Exception as e:
+            db.rollback()
+            print("ERROR: ", e)
+            return False
+
+    @staticmethod
+    def is_tid_existed(table_name, record_id):
+        db = QSqlDatabase.database()
+        query = QSqlQuery(db)
+        query.prepare(
+            f"""
+            SELECT COUNT(*) FROM {table_name}
+            WHERE id = :id
+        """
+        )
+        query.bindValue(":id", record_id)
+        if not query.exec():
+            raise Exception(
+                f"Error checking existence in {table_name} for id [{record_id}]: {query.lastError().text()}"
+            )
+        if query.next():
+            return query.value(0) > 0  # Returns True if record exists
+        return False
+
+    @staticmethod
+    def get_columns(table_name):
+        db = QSqlDatabase.database()
+        if not db.isValid() or not db.isOpen():
+            print("Database is not open or valid.")
+            return False
+        record = db.record(table_name)
+        if record.isEmpty():
+            print((f"Table {table_name} does not exist."))
+            return False
+        columns = []
+        for i in range(record.count()):
+            field_name = record.fieldName(i)
+            columns.append(field_name)
+        return columns

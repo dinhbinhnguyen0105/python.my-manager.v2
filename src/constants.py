@@ -9,3 +9,6 @@ RE_SETTING_CATEGORIES_TABLE = "re_setting_categories_table"
 RE_SETTING_BUILDING_LINES_TABLE = "re_setting_building_line_table"
 RE_SETTING_FURNITURES_TABLE = "re_setting_furnitures_table"
 RE_SETTING_LEGALS_TABLE = "re_setting_legals_table"
+
+RE_TEMPLATE_TITLE_TABLE = "re_template_title_table"
+RE_TEMPLATE_DESCRIPTION_TABLE = "re_template_description_table"
