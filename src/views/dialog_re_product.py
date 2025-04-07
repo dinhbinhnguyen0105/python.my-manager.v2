@@ -33,6 +33,8 @@ class DialogREProduct(QDialog, Ui_Dialog_REProduct):
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
         self.fields = data
+        self.provinces_combobox.setDisabled(True)
+        self.districts_combobox.setDisabled(True)
         self._setupImageDrop()
         self._connect_signals()
         self._initialize_option_radios()
@@ -96,10 +98,9 @@ class DialogREProduct(QDialog, Ui_Dialog_REProduct):
             self.initialize_ui(option_value)
             option_id = option_values.get(option_value)
             self.set_field("option_id", option_id)
-            # Tạo PID mới dựa trên option và cập nhật input
             new_pid = REProductController.generate_pid(option_value)
             self.pid_input.setText(new_pid)
-            self.set_field("pid", new_pid)  # Cập nhật cả self.fields
+            self.set_field("pid", new_pid)
 
         current_option_id = self.fields.get("option_id")
         initial_option_value = None
@@ -117,13 +118,10 @@ class DialogREProduct(QDialog, Ui_Dialog_REProduct):
                     self.initialize_ui("assignment")
                 break
         else:
-            # Nếu không có option_id ban đầu, mặc định chọn sell
             self.option_sell_radio.setChecked(True)
             initial_option_value = "sell"
             self.set_field("option_id", option_values.get("sell"))
             self.initialize_ui("sell")
-
-        # Tạo PID ban đầu dựa trên option được chọn khi khởi tạo
         if not self.fields.get("pid"):
             self.pid_input.setText(
                 REProductController.generate_pid(initial_option_value))

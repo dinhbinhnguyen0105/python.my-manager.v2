@@ -218,6 +218,10 @@ class REProductController(QObject):
             QMessageBox.critical(None, "Error", str(e))
             return False
 
+    @staticmethod
+    def get_image_paths(record_id):
+        return REProductService.get_images_in_directory(record_id)
+
 
 class RESettingController(QObject):
     def __init__(self, table_name, parent=None):

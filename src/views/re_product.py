@@ -51,18 +51,18 @@ class REProduct(QWidget, Ui_REProduct):
         self.products_table.customContextMenuRequested.connect(
             self.show_context_menu)
 
-        # self.products_table.setColumnHidden(0, True)
-        # self.products_table.setColumnHidden(9, True)
-        # self.products_table.setColumnHidden(10, True)
-        # self.products_table.setColumnHidden(16, True)
-        # self.products_table.setColumnHidden(17, True)
-        # self.products_table.setColumnHidden(18, True)
+        self.products_table.setColumnHidden(0, True)
+        self.products_table.setColumnHidden(10, True)
+        self.products_table.setColumnHidden(11, True)
+        self.products_table.setColumnHidden(16, True)
+        self.products_table.setColumnHidden(17, True)
+        self.products_table.setColumnHidden(18, True)
 
         self.products_table.horizontalHeader()
 
-        # self.products_table.selectionModel().selectionChanged.connect(
-        #     self.setup_details
-        # )
+        self.products_table.selectionModel().selectionChanged.connect(
+            self.setup_details
+        )
 
     def setup_buttons(self):
         self.action_create_btn.clicked.connect(self.on_create_btn_clicked)
@@ -83,7 +83,6 @@ class REProduct(QWidget, Ui_REProduct):
         menu.addAction(delete_action)
 
         menu.popup(global_pos)
-        # menu.exec(global_pos)
 
     def get_selected_id(self):
         selected_proxy_indexes = self.products_table.selectionModel().selectedRows()
@@ -94,8 +93,6 @@ class REProduct(QWidget, Ui_REProduct):
         row = source_index.row()
         if 0 <= row < self.model.rowCount():
             return self.model.get_record_id(row)
-            # record = self.model.record(row)
-            # return record.value("id")
         return None
 
     def handle_update(self):
@@ -150,4 +147,8 @@ class REProduct(QWidget, Ui_REProduct):
         if id is None:
             return
         data = self.product_controller.read_product(id)
-        image_paths = self.product_controller.get_image_path(id)
+        image_paths = self.product_controller.get_image_paths(id)
+        # self.detail_text.toPlainText
+        print(self.image_label.text())
+        print(data)
+        print(image_paths)
