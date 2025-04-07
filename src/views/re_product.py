@@ -149,6 +149,6 @@ class REProduct(QWidget, Ui_REProduct):
         data = self.product_controller.read_product(id)
         image_paths = self.product_controller.get_image_paths(id)
         # self.detail_text.toPlainText
-        print(self.image_label.text())
+        # self.image_label.text()
         print(data)
         print(image_paths)
