@@ -1,10 +1,18 @@
 # src/views/setting_view.py
 from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QTableView, QLineEdit, QLabel, QPushButton, QMessageBox
+    QApplication,
+    QMainWindow,
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QTableView,
+    QLineEdit,
+    QLabel,
+    QPushButton,
+    QMessageBox,
 )
 from PyQt6.QtCore import Qt
-from src.models.re_database import initialize_re_products
+from src.models.re_database import inittialize_re_database
 from src.controllers.re_controller import RESettingController
 
 
@@ -13,16 +21,14 @@ class SettingView(QMainWindow):
         super().__init__()
         self.setWindowTitle("Settings - Provinces")
         self.resize(800, 600)
-        self.controller = RESettingController(
-            constants.RE_SETTING_WARDS_TABLE)
+        self.controller = RESettingController(constants.RE_SETTING_WARDS_TABLE)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
 
         self.table_view = QTableView()
-        self.table_view.setSelectionBehavior(
-            QTableView.SelectionBehavior.SelectRows)
+        self.table_view.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
         # self.table_view.setSelectionMode(
         #     QTableView.SelectionMode.SingleSelection)
         main_layout.addWidget(self.table_view)
@@ -61,14 +67,18 @@ class SettingView(QMainWindow):
     def handle_delete(self):
         record_ids = self.get_selected_ids()
         if record_ids:
-            reply = QMessageBox.question(self, "Confirm", f"Delete record(s) with ID(s): {record_ids}?",
-                                         QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, QMessageBox.StandardButton.Yes)
+            reply = QMessageBox.question(
+                self,
+                "Confirm",
+                f"Delete record(s) with ID(s): {record_ids}?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.Yes,
+            )
             if reply == QMessageBox.StandardButton.Yes:
                 for record_id in record_ids:
                     self.controller.delete(record_id)
         else:
-            QMessageBox.warning(
-                self, "Warning", "Please select a row to delete.")
+            QMessageBox.warning(self, "Warning", "Please select a row to delete.")
 
     def get_selected_ids(self):
         selection_model = self.table_view.selectionModel()
@@ -90,8 +100,9 @@ class SettingView(QMainWindow):
 if __name__ == "__main__":
     import sys
     from src import constants  # đảm bảo constants có RE_SETTING_PROVINCES_TABLE
+
     app = QApplication(sys.argv)
-    initialize_re_products()
+    inittialize_re_database()
     window = SettingView()
     window.show()
     sys.exit(app.exec())

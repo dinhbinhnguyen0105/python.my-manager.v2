@@ -63,8 +63,7 @@ def validate_foreign_keys(data):
                         f"Validation failed: {field} value '{value}' does not exist in the table '{table}'"
                     )
             else:
-                raise Exception(
-                    f"Error retrieving result for validation of {field}.")
+                raise Exception(f"Error retrieving result for validation of {field}.")
     return True
 
 
@@ -107,7 +106,6 @@ class REProductService:
                     "repositories",
                     "images",
                     "re",
-                    data.get("pid"),
                 )
             )
             data.setdefault("image_dir", img_dir_default)
@@ -117,15 +115,43 @@ class REProductService:
 
             if not query.exec():
                 db.rollback()
+                raise Exception(f"Error inserting record: {query.lastError().text()}")
+            id = None
+            last_id_query = QSqlQuery(db)
+            if last_id_query.exec("SELECT last_insert_rowid();"):
+                if last_id_query.next():
+                    id = last_id_query.value(0)
+            else:
+                db.rollback()
                 raise Exception(
-                    f"Error inserting record: {query.lastError().text()}")
+                    f"Error get the ID of the latest record: {last_id_query.lastError().text()}"
+                )
+            if not id:
+                db.rollback()
+                return False
+            image_dir = os.path.join(data.get("image_dir"), str(id))
 
-            if not copy_files(
-                data.get("image_paths", []), data.get(
-                    "image_dir"), data.get("id")
-            ):
+            update_query = QSqlQuery(db)
+            update_query.prepare(
+                f"""
+                UPDATE {constants.RE_PRODUCT_TABLE}
+                SET image_dir = :image_dir
+                WHERE id = :id
+                """
+            )
+            update_query.bindValue(":image_dir", image_dir)
+            update_query.bindValue(":id", id)
+            if not update_query.exec():
+                db.rollback()
+                raise Exception(
+                    f"Error updating image_dir: {update_query.lastError().text()}"
+                )
+            if not data.get("image_paths"):
+                raise Exception("Invalid images.")
+            if not copy_files(data["image_paths"], image_dir, str(id)):
                 db.rollback()
                 raise Exception("Failed to copy all image files.")
+
             if not db.commit():
                 db.rollback()
                 raise Exception("Failed to commit transaction.")
@@ -383,8 +409,7 @@ class REProductService:
             raise Exception("Database is not open or valid.")
         table_record = database.record(constants.RE_PRODUCT_TABLE)
         if table_record.isEmpty():
-            raise Exception(
-                f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
+            raise Exception(f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
         columns = []
         for i in range(table_record.count()):
             field_name = table_record.fieldName(i)
@@ -599,8 +624,7 @@ class RETemplateService:
         query = QSqlQuery(db)
         query.prepare(f"SELECT * FROM {table_name}")
         if not query.exec():
-            print(
-                f"Error reading all from {table_name}: {query.lastError().text()}")
+            print(f"Error reading all from {table_name}: {query.lastError().text()}")
             return []
         results = []
         while query.next():
@@ -629,8 +653,7 @@ VALUES ({placeholders})
                 query.bindValue(f":{key}", value)
             if not query.exec():
                 db.rollback()
-                print(
-                    f"Error inserting into {table_name}: {query.lastError().text()}")
+                print(f"Error inserting into {table_name}: {query.lastError().text()}")
                 return False
             if not db.commit():
                 print("Failed to commit transaction.")
@@ -701,19 +724,19 @@ WHERE id = :id
             return False
 
     @staticmethod
-    def is_tid_existed(table_name, record_id):
+    def is_tid_existed(table_name, tid):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
         query.prepare(
             f"""
             SELECT COUNT(*) FROM {table_name}
-            WHERE id = :id
+            WHERE tid = :tid
         """
         )
-        query.bindValue(":id", record_id)
+        query.bindValue(":tid", tid)
         if not query.exec():
             raise Exception(
-                f"Error checking existence in {table_name} for id [{record_id}]: {query.lastError().text()}"
+                f"Error checking existence in {table_name} for tid [{tid}]: {query.lastError().text()}"
             )
         if query.next():
             return query.value(0) > 0  # Returns True if record exists
