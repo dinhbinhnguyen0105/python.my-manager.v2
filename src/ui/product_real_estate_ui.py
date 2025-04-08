@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '/Volumes/KINGSTON/Dev/python/python.my-manager.v2/ui/re_product.ui'
+# Form implementation generated from reading ui file '/Volumes/KINGSTON/Dev/python/python.my-manager.v2/ui/product_real_estate.ui'
 #
 # Created by: PyQt6 UI code generator 6.8.1
 #

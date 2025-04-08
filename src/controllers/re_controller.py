@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import QMessageBox, QDataWidgetMapper
 
 from src import constants
 from src.models.re_model import BaseSettingModel
-from src.services.re_service import RESettingService, REProductService
+from src.services.re_service import RESettingService, REProductService, RETemplateService
 
 
 class REProductController(QObject):
@@ -19,7 +19,8 @@ class REProductController(QObject):
 
     def _initialize_mapper(self):
         self.mapper.setModel(self.model)
-        self.mapper.setSubmitPolicy(QDataWidgetMapper.SubmitPolicy.ManualSubmit)
+        self.mapper.setSubmitPolicy(
+            QDataWidgetMapper.SubmitPolicy.ManualSubmit)
         self.mapper.currentIndexChanged.connect(self._on_current_index_changed)
         self.load_data()
 
@@ -52,7 +53,8 @@ class REProductController(QObject):
                 )
                 return False
         else:
-            QMessageBox.warning(None, "Warning", "Could not submit changes from UI.")
+            QMessageBox.warning(
+                None, "Warning", "Could not submit changes from UI.")
             return False
 
     @staticmethod
@@ -126,9 +128,11 @@ class REProductController(QObject):
             QMessageBox.critical(None, "Error", "Invalid category selected.")
             return False
         if not RESettingService.check_exist_id(
-            constants.RE_SETTING_BUILDING_LINES_TABLE, data.get("building_line_id")
+            constants.RE_SETTING_BUILDING_LINES_TABLE, data.get(
+                "building_line_id")
         ):
-            QMessageBox.critical(None, "Error", "Invalid building_line selected.")
+            QMessageBox.critical(
+                None, "Error", "Invalid building_line selected.")
             return False
         if not RESettingService.check_exist_id(
             constants.RE_SETTING_FURNITURES_TABLE, data.get("furniture_id")
@@ -206,7 +210,8 @@ class REProductController(QObject):
                 )
                 return True
             else:
-                QMessageBox.warning(None, "Warning", "Failed to update product.")
+                QMessageBox.warning(
+                    None, "Warning", "Failed to update product.")
                 return False
         except Exception as e:
             QMessageBox.critical(None, "Error", str(e))
@@ -221,7 +226,8 @@ class REProductController(QObject):
                 )
                 return True
             else:
-                QMessageBox.warning(None, "Warning", "Failed to delete product.")
+                QMessageBox.warning(
+                    None, "Warning", "Failed to delete product.")
                 return False
         except Exception as e:
             QMessageBox.critical(None, "Error", str(e))
@@ -248,7 +254,8 @@ class RESettingController(QObject):
             if record_id:
                 self.model.select()
             else:
-                QMessageBox.critical(None, "Error", "Failed to create new record.")
+                QMessageBox.critical(
+                    None, "Error", "Failed to create new record.")
         except Exception as e:
             error_msg = f"Error creating new record: {e}"
             QMessageBox.critical(None, "Error", error_msg)
@@ -311,6 +318,45 @@ class RESettingController(QObject):
             QMessageBox.critical(None, "Error", error_msg)
 
 
-class RETemplateController(RESettingController):
+class RETemplateController(QObject):
     def __init__(self, table_name, parent=None):
-        super().__init__(table_name, parent)
+        super().__init__(parent)
+        self.table_name = table_name
+        self.model = BaseSettingModel(self.table_name)
+
+    def create_new(self, data):
+        if not data.get("value"):
+            QMessageBox.critical(
+                None, "Error", f"Input field cannot be empty.")
+        try:
+            tid = self.generate_tid()
+            result = RETemplateService.create(self.table_name, {
+                "tid": tid,
+                "value": data.get("value")
+            })
+            return result
+        except Exception as e:
+            error_msg = f"Error creating new record: {e}"
+            QMessageBox.critical(None, "Error", error_msg)
+
+    def get(self, record_id): pass
+    def update(self, record_id, data): pass
+    def get_all(self): pass
+    def delete(self, record_id): pass
+
+    def generate_tid(self):
+        try:
+            while True:
+                uuid_str = str(uuid.uuid4())
+                tid = uuid_str.replace("-", "")[:8]
+                if self.table_name == constants.RE_TEMPLATE_TITLE_TABLE:
+                    tid = "T." + tid
+                elif self.table_name == constants.RE_TEMPLATE_DESCRIPTION_TABLE:
+                    tid = "D." + tid
+                if not RETemplateService.is_tid_existed:
+                    return tid
+                else:
+                    continue
+        except Exception as e:
+            QMessageBox.critical(None, "Error", str(e))
+            raise Exception("Failed to generate TID.")

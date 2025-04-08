@@ -4,7 +4,6 @@ from PyQt6.QtWidgets import (
     QTableView, QLineEdit, QLabel, QPushButton, QMessageBox
 )
 from PyQt6.QtCore import Qt
-from src.models.re_model import RESettingProvincesModel
 from src.models.re_database import initialize_re_products
 from src.controllers.re_controller import RESettingController
 

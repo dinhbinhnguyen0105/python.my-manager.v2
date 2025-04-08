@@ -23,7 +23,8 @@ def initialize_re_products():
         {"label_vi": "đã ngừng", "label_en": "discontinued", "value": "discontinued"},
         {"label_vi": "sắp có", "label_en": "coming soon", "value": "coming_soon"},
     ]
-    provinces = [{"label_vi": "lâm đồng", "label_en": "lam dong", "value": "lam_dong"}]
+    provinces = [{"label_vi": "lâm đồng",
+                  "label_en": "lam dong", "value": "lam_dong"}]
     districts = [
         {"label_vi": "đà lạt", "label_en": "da lat", "value": "da_lat"},
     ]
@@ -63,7 +64,8 @@ def initialize_re_products():
         {"label_vi": "nhà mặt tiền", "label_en": "shop house", "value": "shop_house"},
         {"label_vi": "biệt thự", "label_en": "villa", "value": "villa"},
         {"label_vi": "đất nền", "label_en": "land", "value": "land"},
-        {"label_vi": "căn hộ/ chung cư", "label_en": "apartment", "value": "apartment"},
+        {"label_vi": "căn hộ/ chung cư",
+            "label_en": "apartment", "value": "apartment"},
         {"label_vi": "homestay", "label_en": "homestay", "value": "homestay"},
         {"label_vi": "khách sạn", "label_en": "hotel", "value": "hotel"},
         {"label_vi": "kho/bãi", "label_en": "workshop", "value": "workshop"},
@@ -89,7 +91,8 @@ def initialize_re_products():
         },
         {"label_vi": "sổ nông nghiệp riêng", "label_en": "snnr", "value": "snnr"},
         {"label_vi": "sổ xây dựng chung", "label_en": "sxdc", "value": "sxdc"},
-        {"label_vi": "sổ xây dựng phân quyền", "label_en": "sxdpq", "value": "sxdpq"},
+        {"label_vi": "sổ xây dựng phân quyền",
+            "label_en": "sxdpq", "value": "sxdpq"},
         {"label_vi": "sổ xây dựng riêng", "label_en": "sxdr", "value": "sxdr"},
     ]
     furnitures = [
@@ -181,11 +184,12 @@ def _init_deps(query, table_name, fields):
                label_vi TEXT,
                label_en TEXT,
                value TEXT UNIQUE NOT NULL,
-               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
-               )"""
+               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+               ))"""
     )
     if query.lastError().isValid():
-        print(f"Error creating table '{table_name}': {query.lastError().text()}")
+        print(
+            f"Error creating table '{table_name}': {query.lastError().text()}")
         return False
     query.prepare(
         f"""
@@ -198,7 +202,8 @@ def _init_deps(query, table_name, fields):
         query.bindValue(":label_en", field.get("label_en", ""))
         query.bindValue(":value", field.get("value", ""))
         if not query.exec():
-            print(f"Error inserting into '{table_name}': {query.lastError().text()}")
+            print(
+                f"Error inserting into '{table_name}': {query.lastError().text()}")
             return False
 
     return True
@@ -209,11 +214,12 @@ def _init_template(query: QSqlQuery):
         f"""CREATE TABLE IF NOT EXISTS {constants.RE_TEMPLATE_TITLE_TABLE} (
                id INTEGER PRIMARY KEY AUTOINCREMENT,
                tid TEXT UNIQUE,
-               option TEXT,
+               option_id INTEGER,
                value TEXT,
                updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
-               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
-               """
+               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+                FOREIGN KEY (option_id) REFERENCES {constants.RE_SETTING_OPTIONS_TABLE}(id)
+               )"""
     )
     if query.lastError().isValid():
         print(
@@ -224,11 +230,12 @@ def _init_template(query: QSqlQuery):
         f"""CREATE TABLE IF NOT EXISTS {constants.RE_TEMPLATE_DESCRIPTION_TABLE} (
                id INTEGER PRIMARY KEY AUTOINCREMENT,
                tid TEXT UNIQUE,
-               option TEXT,
+               option_id INTEGER,
                value TEXT,
                updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
-               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
-               """
+               created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+                FOREIGN KEY (option_id) REFERENCES {constants.RE_SETTING_OPTIONS_TABLE}(id)
+               )"""
     )
     if query.lastError().isValid():
         print(

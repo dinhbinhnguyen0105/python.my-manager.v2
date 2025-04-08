@@ -6,13 +6,13 @@ from PyQt6.QtSql import QSqlQuery, QSqlDatabase
 from src import constants
 
 
-def copy_files(sources, destination, pid):
+def copy_files(sources, destination, id):
     os.makedirs(destination, exist_ok=True)
     destination_img_num = len(get_images_in_directory(destination))
 
     for index, file in enumerate(sources):
         _, extension = os.path.splitext(file)
-        file_name = f"{pid}_{index + destination_img_num}{extension}"
+        file_name = f"{id}_{index + destination_img_num}{extension}"
         destination_path = os.path.join(destination, file_name)
         try:
             shutil.copy2(file, destination_path)
@@ -63,7 +63,8 @@ def validate_foreign_keys(data):
                         f"Validation failed: {field} value '{value}' does not exist in the table '{table}'"
                     )
             else:
-                raise Exception(f"Error retrieving result for validation of {field}.")
+                raise Exception(
+                    f"Error retrieving result for validation of {field}.")
     return True
 
 
@@ -116,10 +117,12 @@ class REProductService:
 
             if not query.exec():
                 db.rollback()
-                raise Exception(f"Error inserting record: {query.lastError().text()}")
+                raise Exception(
+                    f"Error inserting record: {query.lastError().text()}")
 
             if not copy_files(
-                data.get("image_paths", []), data.get("image_dir"), data.get("pid")
+                data.get("image_paths", []), data.get(
+                    "image_dir"), data.get("id")
             ):
                 db.rollback()
                 raise Exception("Failed to copy all image files.")
@@ -380,7 +383,8 @@ class REProductService:
             raise Exception("Database is not open or valid.")
         table_record = database.record(constants.RE_PRODUCT_TABLE)
         if table_record.isEmpty():
-            raise Exception(f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
+            raise Exception(
+                f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
         columns = []
         for i in range(table_record.count()):
             field_name = table_record.fieldName(i)
@@ -595,7 +599,8 @@ class RETemplateService:
         query = QSqlQuery(db)
         query.prepare(f"SELECT * FROM {table_name}")
         if not query.exec():
-            print(f"Error reading all from {table_name}: {query.lastError().text()}")
+            print(
+                f"Error reading all from {table_name}: {query.lastError().text()}")
             return []
         results = []
         while query.next():
@@ -624,7 +629,8 @@ VALUES ({placeholders})
                 query.bindValue(f":{key}", value)
             if not query.exec():
                 db.rollback()
-                print(f"Error inserting into {table_name}: {query.lastError().text()}")
+                print(
+                    f"Error inserting into {table_name}: {query.lastError().text()}")
                 return False
             if not db.commit():
                 print("Failed to commit transaction.")

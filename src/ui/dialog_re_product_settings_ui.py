@@ -15,6 +15,7 @@ class Ui_Dialog_REProductSettings(object):
         Dialog_REProductSettings.resize(535, 346)
         Dialog_REProductSettings.setStyleSheet("QDialog {\n"
 "    font-family: \"Courier New\";\n"
+"    background-color: #ffffff;\n"
 "}\n"
 "QLabel{\n"
 "    font-size: 10px;\n"

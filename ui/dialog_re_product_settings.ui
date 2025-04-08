@@ -16,6 +16,7 @@
   <property name="styleSheet">
    <string notr="true">QDialog {
 	font-family: &quot;Courier New&quot;;
+	background-color: #ffffff;
 }
 QLabel{
 	font-size: 10px;

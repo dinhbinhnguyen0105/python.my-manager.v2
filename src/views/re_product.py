@@ -45,17 +45,52 @@ class REProduct(QWidget, Ui_REProduct):
     # ['id', 'pid', 'status_id', 'option_id'3, 'ward_id', 'street', 'category_id6', 'area', 'price', 'legal_id'9, 'province_id', 'district_id', 'structure'12,
     #  'function'13, 'building_line_id'14, 'furniture_id', 'description', 'image_dir', 'created_at', 'updated_at']
     def setup_filters(self):
+        self.pid_input.textChanged.connect(
+            lambda: self.apply_column_filter(
+                self.pid_input.text(), 1
+            )
+        )
+        self.street_input.textChanged.connect(
+            lambda: self.apply_column_filter(
+                self.street_input.text(), 5
+            )
+        )
+        self.price_input.textChanged.connect(
+            lambda: self.apply_column_filter(
+                self.price_input.text(), 8
+            )
+        )
+        self.function_input.textChanged.connect(
+            lambda: self.apply_column_filter(
+                self.function_input.text(), 13
+            )
+        )
+        self.structure_input.textChanged.connect(
+            lambda: self.apply_column_filter(
+                self.structure_input.text(), 12
+            )
+        )
+        self.area_input.textChanged.connect(
+            lambda: self.apply_column_filter(
+                self.area_input.text(), 7
+            )
+        )
+
         self.options_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.options_combobox.currentData(), 3)
+            lambda: self.apply_column_filter(
+                self.options_combobox.currentData(), 3)
         )
         self.wards_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.wards_combobox.currentData(), 4)
+            lambda: self.apply_column_filter(
+                self.wards_combobox.currentData(), 4)
         )
         self.categories_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.categories_combobox.currentData(), 6)
+            lambda: self.apply_column_filter(
+                self.categories_combobox.currentData(), 6)
         )
         self.legal_s_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.legal_s_combobox.currentData(), 9)
+            lambda: self.apply_column_filter(
+                self.legal_s_combobox.currentData(), 9)
         )
         self.building_line_s_combobox.currentIndexChanged.connect(
             lambda: self.apply_column_filter(
@@ -88,8 +123,10 @@ class REProduct(QWidget, Ui_REProduct):
         self.products_table.resizeColumnsToContents()
         self.products_table.setSortingEnabled(True)
 
-        self.products_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.products_table.customContextMenuRequested.connect(self.show_context_menu)
+        self.products_table.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu)
+        self.products_table.customContextMenuRequested.connect(
+            self.show_context_menu)
 
         self.products_table.setColumnHidden(0, True)
         self.products_table.setColumnHidden(10, True)
@@ -101,8 +138,10 @@ class REProduct(QWidget, Ui_REProduct):
         self.products_table.horizontalHeader()
 
     def setup_comboboxes(self):
-        wards = RESettingController.static_get_all(constants.RE_SETTING_WARDS_TABLE)
-        options = RESettingController.static_get_all(constants.RE_SETTING_OPTIONS_TABLE)
+        wards = RESettingController.static_get_all(
+            constants.RE_SETTING_WARDS_TABLE)
+        options = RESettingController.static_get_all(
+            constants.RE_SETTING_OPTIONS_TABLE)
         categories = RESettingController.static_get_all(
             constants.RE_SETTING_CATEGORIES_TABLE
         )
@@ -112,7 +151,8 @@ class REProduct(QWidget, Ui_REProduct):
         furniture_s = RESettingController.static_get_all(
             constants.RE_SETTING_FURNITURES_TABLE
         )
-        legal_s = RESettingController.static_get_all(constants.RE_SETTING_LEGALS_TABLE)
+        legal_s = RESettingController.static_get_all(
+            constants.RE_SETTING_LEGALS_TABLE)
 
         for ward in wards:
             name = ward.get("label_vi").capitalize()
@@ -173,7 +213,8 @@ class REProduct(QWidget, Ui_REProduct):
             edit_dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
             edit_dialog.setFixedSize(edit_dialog.size())
             edit_dialog.accepted.connect(
-                lambda: self.product_controller.update_product(id, edit_dialog.fields)
+                lambda: self.product_controller.update_product(
+                    id, edit_dialog.fields)
             )
             edit_dialog.exec()
 
