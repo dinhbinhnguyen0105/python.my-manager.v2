@@ -19,25 +19,48 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget:ProductRealEstate{
-background-color: #ffffff;
+   <string notr="true">#REProduct{
+  font-family: &quot;Courier New&quot;;
+  background-color: #FFFFFF;
 }
 QGroupBox {
-font-family: &quot;Courier New&quot;;
-font-size: 13px;
-background-color: rgba(248, 249, 250, 1);
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  background-color: rgba(248, 249, 250, 1);
 }
-QLineEdit{
-border: 1px solid #CED4DA;
-border-radius: 4px;
-margin-left: 8px;
-padding: 4px 0 4px 4px;
+QLineEdit {
+  padding: 4px 0;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  margin-left: 8px;
+  padding-left: 4px;
+  background-color: #FFFFFF;
+  color:#212529;
 }
-QLabel{
-font-size: 10px;
-color: rgb(90, 93, 97);
-max-height: 16px
-}</string>
+QPlainTextEdit {
+	background-color: #FFFFFF;
+  color:#212529;
+}
+QLabel {
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  color: rgb(90, 93, 97);
+}
+QRadioButton {
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  color: #212529;
+}
+QComboBox {
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  color: #212529;
+}
+QPushButton {
+  color: #212529;
+}
+
+</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <property name="spacing">
@@ -166,7 +189,7 @@ max-height: 16px
                      <widget class="QLabel" name="function_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -215,7 +238,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="wards_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -268,7 +291,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="options_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -318,7 +341,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="categories_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -368,7 +391,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="building_line_s_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -418,7 +441,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="furniture_s_lable">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -468,7 +491,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="legal_s_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -518,6 +541,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="pid_label">
                       <property name="font">
                        <font>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -566,7 +590,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="street_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -615,7 +639,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="area_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -664,7 +688,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="price_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -713,7 +737,7 @@ padding-left: 4px;</string>
                      <widget class="QLabel" name="structure_label">
                       <property name="font">
                        <font>
-                        <family>.AppleSystemUIFont</family>
+                        <family>Courier New</family>
                         <pointsize>-1</pointsize>
                        </font>
                       </property>
@@ -773,6 +797,13 @@ padding-left: 4px;</string>
                 <widget class="QPushButton" name="action_create_btn">
                  <property name="text">
                   <string>Create new</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="action_settings_btn">
+                 <property name="text">
+                  <string>Settings</string>
                  </property>
                 </widget>
                </item>
@@ -857,7 +888,7 @@ padding-left: 4px;</string>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
-              <height>16</height>
+              <height>16777215</height>
              </size>
             </property>
             <property name="text">
@@ -892,9 +923,9 @@ padding-left: 4px;</string>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_3">
                <item>
-                <widget class="QPushButton" name="action_settings_btn">
+                <widget class="QPushButton" name="action_templates_btn">
                  <property name="text">
-                  <string>Settings</string>
+                  <string>Templates</string>
                  </property>
                 </widget>
                </item>

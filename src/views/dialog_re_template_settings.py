@@ -26,7 +26,8 @@ class DialogRETemplateSetting(QDialog, Ui_Dialog_RETemplateSettings):
         # self.delete_btn.clicked.connect(self.handle_delete)
 
     def setup_ui(self):
-        options = RESettingController.static_get_all(constants.RE_SETTING_OPTIONS_TABLE)
+        options = RESettingController.static_get_all(
+            constants.RE_SETTING_OPTIONS_TABLE)
         for option in options:
             self.options_combobox.addItem(
                 option.get("label_vi").capitalize(), option.get("id")
@@ -60,9 +61,12 @@ class DialogRETemplateSetting(QDialog, Ui_Dialog_RETemplateSettings):
         self.tableView.hideColumn(5)
         # self.tableView.resizeColumnsToContents()
         self.tableView.setSortingEnabled(True)
-        self.tableView.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.tableView.customContextMenuRequested.connect(self.show_context_menu)
-        self.tableView.setSelectionBehavior(self.tableView.SelectionBehavior.SelectRows)
+        self.tableView.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu)
+        self.tableView.customContextMenuRequested.connect(
+            self.show_context_menu)
+        self.tableView.setSelectionBehavior(
+            self.tableView.SelectionBehavior.SelectRows)
 
     def show_context_menu(self, pos):
         global_pos = self.tableView.mapToGlobal(pos)
@@ -89,7 +93,7 @@ class DialogRETemplateSetting(QDialog, Ui_Dialog_RETemplateSettings):
             return
         self.controller.create_new(
             {
-                "option": self.options_combobox.currentData(),
+                "option_id": self.options_combobox.currentData(),
                 "value": (
                     self.title_input.text()
                     if self.current_model_name == constants.RE_TEMPLATE_TITLE_TABLE
@@ -114,4 +118,5 @@ class DialogRETemplateSetting(QDialog, Ui_Dialog_RETemplateSettings):
                 for record_id in record_ids:
                     self.controller.delete(record_id)
         else:
-            QMessageBox.warning(self, "Warning", "Please select a row to delete.")
+            QMessageBox.warning(
+                self, "Warning", "Please select a row to delete.")

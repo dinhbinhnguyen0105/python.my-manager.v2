@@ -36,8 +36,10 @@ class REProduct(QWidget, Ui_REProduct):
         self.setup_comboboxes()
 
     def setup_comboboxes(self):
-        wards = RESettingController.static_get_all(constants.RE_SETTING_WARDS_TABLE)
-        options = RESettingController.static_get_all(constants.RE_SETTING_OPTIONS_TABLE)
+        wards = RESettingController.static_get_all(
+            constants.RE_SETTING_WARDS_TABLE)
+        options = RESettingController.static_get_all(
+            constants.RE_SETTING_OPTIONS_TABLE)
         categories = RESettingController.static_get_all(
             constants.RE_SETTING_CATEGORIES_TABLE
         )
@@ -47,7 +49,8 @@ class REProduct(QWidget, Ui_REProduct):
         furniture_s = RESettingController.static_get_all(
             constants.RE_SETTING_FURNITURES_TABLE
         )
-        legal_s = RESettingController.static_get_all(constants.RE_SETTING_LEGALS_TABLE)
+        legal_s = RESettingController.static_get_all(
+            constants.RE_SETTING_LEGALS_TABLE)
 
         for ward in wards:
             name = ward.get("label_vi").capitalize()
@@ -78,6 +81,8 @@ class REProduct(QWidget, Ui_REProduct):
         self.setup_filters()
         self.action_create_btn.clicked.connect(self.handle_create)
         self.action_settings_btn.clicked.connect(self.handle_product_settings)
+        self.action_templates_btn.clicked.connect(
+            self.handle_template_settings)
         self.products_table.selectionModel().selectionChanged.connect(
             self.setup_details
         )
@@ -103,16 +108,20 @@ class REProduct(QWidget, Ui_REProduct):
         )
 
         self.options_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.options_combobox.currentData(), 3)
+            lambda: self.apply_column_filter(
+                self.options_combobox.currentData(), 3)
         )
         self.wards_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.wards_combobox.currentData(), 4)
+            lambda: self.apply_column_filter(
+                self.wards_combobox.currentData(), 4)
         )
         self.categories_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.categories_combobox.currentData(), 6)
+            lambda: self.apply_column_filter(
+                self.categories_combobox.currentData(), 6)
         )
         self.legal_s_combobox.currentIndexChanged.connect(
-            lambda: self.apply_column_filter(self.legal_s_combobox.currentData(), 9)
+            lambda: self.apply_column_filter(
+                self.legal_s_combobox.currentData(), 9)
         )
         self.building_line_s_combobox.currentIndexChanged.connect(
             lambda: self.apply_column_filter(
@@ -131,7 +140,7 @@ class REProduct(QWidget, Ui_REProduct):
             return
         data = self.product_controller.read_product(id)
         image_paths = self.product_controller.get_image_paths(id)
-        print(image_paths)
+        # print(image_paths)
 
     def apply_column_filter(self, filter_text, column_index):
         if (
@@ -153,8 +162,10 @@ class REProduct(QWidget, Ui_REProduct):
         # self.products_table.resizeColumnsToContents()
         self.products_table.setSortingEnabled(True)
 
-        self.products_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.products_table.customContextMenuRequested.connect(self.show_context_menu)
+        self.products_table.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu)
+        self.products_table.customContextMenuRequested.connect(
+            self.show_context_menu)
 
         self.products_table.setColumnHidden(0, True)
         self.products_table.setColumnHidden(10, True)
@@ -222,12 +233,15 @@ class REProduct(QWidget, Ui_REProduct):
         id = self.get_selected_id()
         if id is not None:
             current_product_data = self.product_controller.read_product(id)
+            image_paths = self.product_controller.get_image_paths(id)
+            current_product_data.setdefault("image_paths", image_paths)
             edit_dialog = DialogREProduct(current_product_data)
             edit_dialog.setWindowTitle("Edit Product")
             edit_dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
             edit_dialog.setFixedSize(edit_dialog.size())
             edit_dialog.accepted.connect(
-                lambda: self.product_controller.update_product(id, edit_dialog.fields)
+                lambda: self.product_controller.update_product(
+                    id, edit_dialog.fields)
             )
             edit_dialog.exec()
 
@@ -238,13 +252,15 @@ class REProduct(QWidget, Ui_REProduct):
     def handle_template_settings(self):
         template_settings_dialog = DialogRETemplateSetting()
         template_settings_dialog.setWindowTitle("setting template".title())
-        template_settings_dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        template_settings_dialog.setAttribute(
+            Qt.WidgetAttribute.WA_DeleteOnClose)
         template_settings_dialog.setFixedSize(template_settings_dialog.size())
         template_settings_dialog.exec()
 
     def handle_product_settings(self):
         product_settings_dialog = DialogREProductSetting()
         product_settings_dialog.setWindowTitle("setting product".title())
-        product_settings_dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        product_settings_dialog.setAttribute(
+            Qt.WidgetAttribute.WA_DeleteOnClose)
         product_settings_dialog.setFixedSize(product_settings_dialog.size())
         product_settings_dialog.exec()

@@ -63,7 +63,8 @@ def validate_foreign_keys(data):
                         f"Validation failed: {field} value '{value}' does not exist in the table '{table}'"
                     )
             else:
-                raise Exception(f"Error retrieving result for validation of {field}.")
+                raise Exception(
+                    f"Error retrieving result for validation of {field}.")
     return True
 
 
@@ -99,23 +100,21 @@ class REProductService:
             now = datetime.datetime.now()
             formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
             data.setdefault("updated_at", formatted_time)
-            img_dir_default = os.path.abspath(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    "..",
-                    "repositories",
-                    "images",
-                    "re",
-                )
+            img_dir_default = os.path.join(
+                "repositories",
+                "images",
+                "re",
             )
-            data.setdefault("image_dir", img_dir_default)
+            if not data.get("image_dir"):
+                data["image_dir"] = img_dir_default
             for key in REProductService.get_columns():
                 if key != "id":
                     query.bindValue(f":{key}", data.get(key))
 
             if not query.exec():
                 db.rollback()
-                raise Exception(f"Error inserting record: {query.lastError().text()}")
+                raise Exception(
+                    f"Error inserting record: {query.lastError().text()}")
             id = None
             last_id_query = QSqlQuery(db)
             if last_id_query.exec("SELECT last_insert_rowid();"):
@@ -388,6 +387,8 @@ class REProductService:
         )
         query.bindValue(":id", id)
         if not query.exec():
+            print(
+                f"Error executing query to fetch image directory for product ID [{id}]: {query.lastError().text()}")
             raise Exception(
                 f"Error executing query to fetch image directory for product ID [{id}]: {query.lastError().text()}"
             )
@@ -399,8 +400,12 @@ class REProductService:
             images = []
             for file in os.listdir(image_dir):
                 if file.endswith((".png", ".jpg", ".jpeg")):
-                    images.append(os.path.join(image_dir, file))
+                    images.append(os.path.abspath(
+                        os.path.join(image_dir, file)))
             return images
+        else:
+            print("Invalid 'image_dir'")
+            return []
 
     @staticmethod
     def get_columns() -> list[str]:
@@ -409,7 +414,8 @@ class REProductService:
             raise Exception("Database is not open or valid.")
         table_record = database.record(constants.RE_PRODUCT_TABLE)
         if table_record.isEmpty():
-            raise Exception(f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
+            raise Exception(
+                f"Table {constants.RE_PRODUCT_TABLE} does not exist.")
         columns = []
         for i in range(table_record.count()):
             field_name = table_record.fieldName(i)
@@ -624,7 +630,8 @@ class RETemplateService:
         query = QSqlQuery(db)
         query.prepare(f"SELECT * FROM {table_name}")
         if not query.exec():
-            print(f"Error reading all from {table_name}: {query.lastError().text()}")
+            print(
+                f"Error reading all from {table_name}: {query.lastError().text()}")
             return []
         results = []
         while query.next():
@@ -641,19 +648,19 @@ class RETemplateService:
             raise Exception("Failed to start transaction.")
         columns = ", ".join(data.keys())
         placeholders = ", ".join([f":{key}" for key in data.keys()])
-        try:
-            query = QSqlQuery(db)
-            query.prepare(
-                f"""
+        sql = f"""
 INSERT INTO {table_name} ({columns})
 VALUES ({placeholders})
                 """
-            )
+        try:
+            query = QSqlQuery(db)
+            query.prepare(sql)
             for key, value in data.items():
                 query.bindValue(f":{key}", value)
             if not query.exec():
                 db.rollback()
-                print(f"Error inserting into {table_name}: {query.lastError().text()}")
+                print(
+                    f"Error inserting into {table_name}: {query.lastError().text()}")
                 return False
             if not db.commit():
                 print("Failed to commit transaction.")

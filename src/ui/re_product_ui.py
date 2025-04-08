@@ -16,25 +16,48 @@ class Ui_REProduct(object):
         font = QtGui.QFont()
         font.setFamily("Courier New")
         REProduct.setFont(font)
-        REProduct.setStyleSheet("QWidget:ProductRealEstate{\n"
-                                "background-color: #ffffff;\n"
+        REProduct.setStyleSheet("#REProduct{\n"
+                                "  font-family: \"Courier New\";\n"
+                                "  background-color: #FFFFFF;\n"
                                 "}\n"
                                 "QGroupBox {\n"
-                                "font-family: \"Courier New\";\n"
-                                "font-size: 13px;\n"
-                                "background-color: rgba(248, 249, 250, 1);\n"
+                                "  font-family: \"Courier New\";\n"
+                                "  font-size: 13px;\n"
+                                "  background-color: rgba(248, 249, 250, 1);\n"
                                 "}\n"
-                                "QLineEdit{\n"
-                                "border: 1px solid #CED4DA;\n"
-                                "border-radius: 4px;\n"
-                                "margin-left: 8px;\n"
-                                "padding: 4px 0 4px 4px;\n"
+                                "QLineEdit {\n"
+                                "  padding: 4px 0;\n"
+                                "  border: 1px solid #ced4da;\n"
+                                "  border-radius: 8px;\n"
+                                "  margin-left: 8px;\n"
+                                "  padding-left: 4px;\n"
+                                "  background-color: #FFFFFF;\n"
+                                "  color:#212529;\n"
                                 "}\n"
-                                "QLabel{\n"
-                                "font-size: 10px;\n"
-                                "color: rgb(90, 93, 97);\n"
-                                "max-height: 16px\n"
-                                "}")
+                                "QPlainTextEdit {\n"
+                                "    background-color: #FFFFFF;\n"
+                                "  color:#212529;\n"
+                                "}\n"
+                                "QLabel {\n"
+                                "  font-family: \"Courier New\";\n"
+                                "  font-size: 13px;\n"
+                                "  color: rgb(90, 93, 97);\n"
+                                "}\n"
+                                "QRadioButton {\n"
+                                "  font-family: \"Courier New\";\n"
+                                "  font-size: 13px;\n"
+                                "  color: #212529;\n"
+                                "}\n"
+                                "QComboBox {\n"
+                                "  font-family: \"Courier New\";\n"
+                                "  font-size: 13px;\n"
+                                "  color: #212529;\n"
+                                "}\n"
+                                "QPushButton {\n"
+                                "  color: #212529;\n"
+                                "}\n"
+                                "\n"
+                                "")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(REProduct)
         self.horizontalLayout_6.setContentsMargins(8, 8, 8, 8)
         self.horizontalLayout_6.setSpacing(0)
@@ -85,7 +108,7 @@ class Ui_REProduct(object):
         self.function_label = QtWidgets.QLabel(
             parent=self.function_cotnainer_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.function_label.setFont(font)
         self.function_label.setStyleSheet("margin: 0;")
@@ -110,7 +133,7 @@ class Ui_REProduct(object):
         self.verticalLayout_16.setObjectName("verticalLayout_16")
         self.wards_label = QtWidgets.QLabel(parent=self.wards_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.wards_label.setFont(font)
         self.wards_label.setStyleSheet("margin: 0;")
@@ -136,7 +159,7 @@ class Ui_REProduct(object):
         self.verticalLayout_14.setObjectName("verticalLayout_14")
         self.options_label = QtWidgets.QLabel(parent=self.options_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.options_label.setFont(font)
         self.options_label.setStyleSheet("margin: 0;")
@@ -162,7 +185,7 @@ class Ui_REProduct(object):
         self.categories_label = QtWidgets.QLabel(
             parent=self.categories_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.categories_label.setFont(font)
         self.categories_label.setStyleSheet("margin: 0;")
@@ -189,7 +212,7 @@ class Ui_REProduct(object):
         self.building_line_s_label = QtWidgets.QLabel(
             parent=self.building_line_s_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.building_line_s_label.setFont(font)
         self.building_line_s_label.setStyleSheet("margin: 0;")
@@ -215,7 +238,7 @@ class Ui_REProduct(object):
         self.furniture_s_lable = QtWidgets.QLabel(
             parent=self.furniture_s_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.furniture_s_lable.setFont(font)
         self.furniture_s_lable.setStyleSheet("margin: 0;")
@@ -240,7 +263,7 @@ class Ui_REProduct(object):
         self.verticalLayout_24.setObjectName("verticalLayout_24")
         self.legal_s_label = QtWidgets.QLabel(parent=self.legal_s_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.legal_s_label.setFont(font)
         self.legal_s_label.setStyleSheet("margin: 0;")
@@ -263,6 +286,7 @@ class Ui_REProduct(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.pid_label = QtWidgets.QLabel(parent=self.pid_container_w)
         font = QtGui.QFont()
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.pid_label.setFont(font)
         self.pid_label.setStyleSheet("margin: 0;")
@@ -286,7 +310,7 @@ class Ui_REProduct(object):
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.street_label = QtWidgets.QLabel(parent=self.street_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.street_label.setFont(font)
         self.street_label.setStyleSheet("margin: 0;")
@@ -309,7 +333,7 @@ class Ui_REProduct(object):
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.area_label = QtWidgets.QLabel(parent=self.area_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.area_label.setFont(font)
         self.area_label.setStyleSheet("margin: 0;")
@@ -333,7 +357,7 @@ class Ui_REProduct(object):
         self.verticalLayout_12.setObjectName("verticalLayout_12")
         self.price_label = QtWidgets.QLabel(parent=self.price_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.price_label.setFont(font)
         self.price_label.setStyleSheet("margin: 0;")
@@ -359,7 +383,7 @@ class Ui_REProduct(object):
         self.structure_label = QtWidgets.QLabel(
             parent=self.structure_container_w)
         font = QtGui.QFont()
-        font.setFamily(".AppleSystemUIFont")
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.structure_label.setFont(font)
         self.structure_label.setStyleSheet("margin: 0;")
@@ -391,6 +415,10 @@ class Ui_REProduct(object):
             parent=self.actions_container_w)
         self.action_create_btn.setObjectName("action_create_btn")
         self.horizontalLayout.addWidget(self.action_create_btn)
+        self.action_settings_btn = QtWidgets.QPushButton(
+            parent=self.actions_container_w)
+        self.action_settings_btn.setObjectName("action_settings_btn")
+        self.horizontalLayout.addWidget(self.action_settings_btn)
         self.action_upload_btn = QtWidgets.QPushButton(
             parent=self.actions_container_w)
         self.action_upload_btn.setObjectName("action_upload_btn")
@@ -427,7 +455,7 @@ class Ui_REProduct(object):
         self.verticalLayout_17.setObjectName("verticalLayout_17")
         self.image_label = QtWidgets.QLabel(parent=self.details_container_w)
         self.image_label.setMinimumSize(QtCore.QSize(0, 200))
-        self.image_label.setMaximumSize(QtCore.QSize(16777215, 16))
+        self.image_label.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.image_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.image_label.setObjectName("image_label")
         self.verticalLayout_17.addWidget(self.image_label)
@@ -446,10 +474,10 @@ class Ui_REProduct(object):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.action_settings_btn = QtWidgets.QPushButton(
+        self.action_templates_btn = QtWidgets.QPushButton(
             parent=self.detail_action_container_w)
-        self.action_settings_btn.setObjectName("action_settings_btn")
-        self.horizontalLayout_3.addWidget(self.action_settings_btn)
+        self.action_templates_btn.setObjectName("action_templates_btn")
+        self.horizontalLayout_3.addWidget(self.action_templates_btn)
         self.action_default_btn = QtWidgets.QPushButton(
             parent=self.detail_action_container_w)
         self.action_default_btn.setObjectName("action_default_btn")
@@ -494,9 +522,10 @@ class Ui_REProduct(object):
         self.price_label.setText(_translate("REProduct", "Giá"))
         self.structure_label.setText(_translate("REProduct", "Kết cấu"))
         self.action_create_btn.setText(_translate("REProduct", "Create new"))
+        self.action_settings_btn.setText(_translate("REProduct", "Settings"))
         self.action_upload_btn.setText(_translate("REProduct", "Upload"))
         self.action_download_btn.setText(_translate("REProduct", "Download"))
         self.image_label.setText(_translate("REProduct", "Images"))
-        self.action_settings_btn.setText(_translate("REProduct", "Settings"))
+        self.action_templates_btn.setText(_translate("REProduct", "Templates"))
         self.action_default_btn.setText(_translate("REProduct", "Default"))
         self.action_random_btn.setText(_translate("REProduct", "Random"))

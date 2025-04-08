@@ -13,30 +13,48 @@ class Ui_Dialog_RETemplateSettings(object):
     def setupUi(self, Dialog_RETemplateSettings):
         Dialog_RETemplateSettings.setObjectName("Dialog_RETemplateSettings")
         Dialog_RETemplateSettings.resize(480, 443)
-        Dialog_RETemplateSettings.setStyleSheet("QDialog {\n"
-"    font-family: \"Courier New\";\n"
-"    background-color: #ffffff;\n"
-"}\n"
-"QLabel{\n"
-"    font-size: 10px;\n"
-"    font-weight: 600;\n"
-"    color: rgb(90, 93, 97);\n"
-"    max-height: 14px;\n"
-"}\n"
-"QLineEdit {\n"
-"padding: 4px 0;\n"
-"border: 1px solid #CED4DA;\n"
-"border-radius: 8px;\n"
-"margin-left: 8px;\n"
-"padding-left: 4px;\n"
-"}\n"
-"QRadioButton{\n"
-"font-family: \"Courier New\";\n"
+        Dialog_RETemplateSettings.setStyleSheet("#Dialog_RETemplateSettings{\n"
+"  font-family: \"Courier New\";\n"
+"  background-color: #FFFFFF;\n"
 "}\n"
 "QGroupBox {\n"
-"margin: 4px 0;\n"
-"background-color: rgba(248, 249, 250, .8);\n"
-"}")
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  background-color: rgba(248, 249, 250, 1);\n"
+"}\n"
+"QLineEdit {\n"
+"  padding: 4px 0;\n"
+"  border: 1px solid #ced4da;\n"
+"  border-radius: 8px;\n"
+"  margin-left: 8px;\n"
+"  padding-left: 4px;\n"
+"  background-color: #FFFFFF;\n"
+"  color:#212529;\n"
+"}\n"
+"QPlainTextEdit {\n"
+"    background-color: #FFFFFF;\n"
+"  color:#212529;\n"
+"}\n"
+"QLabel {\n"
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  color: rgb(90, 93, 97);\n"
+"}\n"
+"QRadioButton {\n"
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  color: #212529;\n"
+"}\n"
+"QComboBox {\n"
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  color: #212529;\n"
+"}\n"
+"QPushButton {\n"
+"  color: #212529;\n"
+"}\n"
+"\n"
+"")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(Dialog_RETemplateSettings)
         self.verticalLayout_7.setContentsMargins(8, 8, 8, 8)
         self.verticalLayout_7.setSpacing(0)
@@ -55,18 +73,15 @@ class Ui_Dialog_RETemplateSettings(object):
         self.options_container.setObjectName("options_container")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.options_container)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setObjectName("gridLayout")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.title_radio = QtWidgets.QRadioButton(parent=self.options_container)
         self.title_radio.setObjectName("title_radio")
-        self.gridLayout.addWidget(self.title_radio, 0, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.title_radio)
         self.description_radio = QtWidgets.QRadioButton(parent=self.options_container)
         self.description_radio.setObjectName("description_radio")
-        self.gridLayout.addWidget(self.description_radio, 0, 1, 1, 1)
-        self.options_combobox = QtWidgets.QComboBox(parent=self.options_container)
-        self.options_combobox.setObjectName("options_combobox")
-        self.gridLayout.addWidget(self.options_combobox, 2, 0, 1, 2)
-        self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.description_radio)
+        self.gridLayout_2.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         self.verticalLayout_5.addWidget(self.options_container)
         self.description_container = QtWidgets.QWidget(parent=self.dialog_container)
         self.description_container.setObjectName("description_container")
@@ -109,16 +124,19 @@ class Ui_Dialog_RETemplateSettings(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.button_container)
         self.horizontalLayout_4.setContentsMargins(8, 8, 8, 8)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setObjectName("gridLayout")
         self.create_btn = QtWidgets.QPushButton(parent=self.button_container)
         self.create_btn.setObjectName("create_btn")
-        self.horizontalLayout_3.addWidget(self.create_btn)
+        self.gridLayout.addWidget(self.create_btn, 1, 0, 1, 1)
         self.delete_btn = QtWidgets.QPushButton(parent=self.button_container)
         self.delete_btn.setEnabled(True)
         self.delete_btn.setObjectName("delete_btn")
-        self.horizontalLayout_3.addWidget(self.delete_btn)
-        self.horizontalLayout_4.addLayout(self.horizontalLayout_3)
+        self.gridLayout.addWidget(self.delete_btn, 1, 1, 1, 1)
+        self.options_combobox = QtWidgets.QComboBox(parent=self.button_container)
+        self.options_combobox.setObjectName("options_combobox")
+        self.gridLayout.addWidget(self.options_combobox, 0, 0, 1, 2)
+        self.horizontalLayout_4.addLayout(self.gridLayout)
         self.verticalLayout_5.addWidget(self.button_container)
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout_5.addItem(spacerItem)

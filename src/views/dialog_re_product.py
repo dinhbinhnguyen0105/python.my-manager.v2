@@ -102,10 +102,10 @@ class DialogREProduct(QDialog, Ui_Dialog_REProduct):
             self.pid_input.setText(new_pid)
             self.set_field("pid", new_pid)
 
-        current_option_id = self.fields.get("option_id")
+        current_option_text = self.fields.get("option")
         initial_option_value = None
         for value, id in option_values.items():
-            if id == current_option_id:
+            if id == current_option_text:
                 initial_option_value = value
                 if value == "sell":
                     self.option_sell_radio.setChecked(True)
@@ -144,23 +144,22 @@ class DialogREProduct(QDialog, Ui_Dialog_REProduct):
         self.structure_input.setText(str(self.fields.get("structure")))
         self.function_input.setText(str(self.fields.get("function")))
         self.price_input.setText(str(self.fields.get("price")))
-
         self._load_combobox_data(
-            self.provinces_combobox, constants.RE_SETTING_PROVINCES_TABLE, self.fields.get("province_id"))
+            self.provinces_combobox, constants.RE_SETTING_PROVINCES_TABLE, self.fields.get("province"))
         self._load_combobox_data(
-            self.districts_combobox, constants.RE_SETTING_DISTRICTS_TABLE, self.fields.get("district_id"))
+            self.districts_combobox, constants.RE_SETTING_DISTRICTS_TABLE, self.fields.get("district"))
         self._load_combobox_data(
-            self.wards_combobox, constants.RE_SETTING_WARDS_TABLE, self.fields.get("ward_id"))
+            self.wards_combobox, constants.RE_SETTING_WARDS_TABLE, self.fields.get("ward"))
         self._load_combobox_data(
-            self.statuses_combobox, constants.RE_SETTING_STATUS_TABLE, self.fields.get("status_id"))
+            self.statuses_combobox, constants.RE_SETTING_STATUS_TABLE, self.fields.get("status"))
         self._load_combobox_data(
-            self.categories_combobox, constants.RE_SETTING_CATEGORIES_TABLE, self.fields.get("category_id"))
+            self.categories_combobox, constants.RE_SETTING_CATEGORIES_TABLE, self.fields.get("category"))
         self._load_combobox_data(self.building_line_s_combobox,
-                                 constants.RE_SETTING_BUILDING_LINES_TABLE, self.fields.get("building_line_id"))
+                                 constants.RE_SETTING_BUILDING_LINES_TABLE, self.fields.get("building_line"))
         self._load_combobox_data(
-            self.furniture_s_combobox, constants.RE_SETTING_FURNITURES_TABLE, self.fields.get("furniture_id"))
+            self.furniture_s_combobox, constants.RE_SETTING_FURNITURES_TABLE, self.fields.get("furniture"))
         self._load_combobox_data(
-            self.legal_s_combobox, constants.RE_SETTING_LEGALS_TABLE, self.fields.get("legal_id"))
+            self.legal_s_combobox, constants.RE_SETTING_LEGALS_TABLE, self.fields.get("legal"))
 
     def set_field(self, field, value):
         if not value:
@@ -176,17 +175,16 @@ class DialogREProduct(QDialog, Ui_Dialog_REProduct):
     def initialize_ui(self, option):
         self.legal_s_combobox.setEnabled(option not in ("assignment", "rent"))
 
-    def _load_combobox_data(self, combobox_widget, table_name, current_id=-1):
+    def _load_combobox_data(self, combobox_widget, table_name, current_text=-1):
         combobox_widget.clear()
-        get_all_setting = RESettingController.static_get_all
-        records = get_all_setting(table_name)
+        records = RESettingController.static_get_all(table_name)
         for record in records:
             record_id = record.get("id", -1)
-            record_vi_label = record.get("label_vi", "undefined").title()
-            combobox_widget.addItem(record_vi_label, record_id)
-            if current_id == record_id:
+            record_vi_label = record.get("label_vi", "undefined")
+            combobox_widget.addItem(record_vi_label.title(), record_id)
+            if current_text and (current_text.lower() == record_vi_label.lower()):
                 combobox_widget.setCurrentIndex(
-                    combobox_widget.count() - 1)  # Chọn sau khi thêm
+                    combobox_widget.count() - 1)
 
     def _setupImageDrop(self):
         self.image_input.setAcceptDrops(True)

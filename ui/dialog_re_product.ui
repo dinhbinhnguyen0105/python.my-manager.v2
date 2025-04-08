@@ -21,34 +21,48 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDialog {
-background-color: #FFFFFF;
+   <string notr="true">#Dialog_REProduct {
+  font-family: &quot;Courier New&quot;;
+  background-color: #FFFFFF;
 }
-QLineEdit{
-padding: 4px 0;
-border: 1px solid #CED4DA;
-border-radius: 8px;
-margin-left: 8px;
-padding-left: 4px;
+QGroupBox {
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  background-color: rgba(248, 249, 250, 1);
 }
-QLabel{
-font-family: &quot;Courier New&quot;;
-font-size: 13px;
-color: rgb(90, 93, 97);
+QLineEdit {
+  padding: 4px 0;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  margin-left: 8px;
+  padding-left: 4px;
+  background-color: #FFFFFF;
+  color:#212529;
+}
+QPlainTextEdit {
+	background-color: #FFFFFF;
+  color:#212529;
+}
+QLabel {
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  color: rgb(90, 93, 97);
 }
 QRadioButton {
-font-family: &quot;Courier New&quot;;
-font-size: 13px;
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  color: #212529;
 }
-QComboBox{
-font-family: &quot;Courier New&quot;;
-font-size: 13px;
+QComboBox {
+  font-family: &quot;Courier New&quot;;
+  font-size: 13px;
+  color: #212529;
 }
-QGroupBox{
-font-family: &quot;Courier New&quot;;
-font-size: 13px;
-background-color: rgba(248, 249, 250, 1);
-}</string>
+QPushButton {
+  color: #212529;
+}
+
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="spacing">

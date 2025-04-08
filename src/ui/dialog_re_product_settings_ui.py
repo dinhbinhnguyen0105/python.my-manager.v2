@@ -13,26 +13,48 @@ class Ui_Dialog_REProductSettings(object):
     def setupUi(self, Dialog_REProductSettings):
         Dialog_REProductSettings.setObjectName("Dialog_REProductSettings")
         Dialog_REProductSettings.resize(535, 346)
-        Dialog_REProductSettings.setStyleSheet("QDialog {\n"
-"    font-family: \"Courier New\";\n"
-"    background-color: #ffffff;\n"
+        Dialog_REProductSettings.setStyleSheet("#Dialog_REProductSettings {\n"
+"  font-family: \"Courier New\";\n"
+"  background-color: #FFFFFF;\n"
 "}\n"
-"QLabel{\n"
-"    font-size: 10px;\n"
-"    font-weight: 600;\n"
-"    color: rgb(90, 93, 97);\n"
-"    max-height: 14px;\n"
+"QGroupBox {\n"
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  background-color: rgba(248, 249, 250, 1);\n"
 "}\n"
 "QLineEdit {\n"
-"padding: 4px 0;\n"
-"border: 1px solid #CED4DA;\n"
-"border-radius: 8px;\n"
-"margin-left: 8px;\n"
-"padding-left: 4px;\n"
+"  padding: 4px 0;\n"
+"  border: 1px solid #ced4da;\n"
+"  border-radius: 8px;\n"
+"  margin-left: 8px;\n"
+"  padding-left: 4px;\n"
+"  background-color: #FFFFFF;\n"
+"  color:#212529;\n"
 "}\n"
-"QRadioButton{\n"
-"font-family: \"Courier New\";\n"
-"}")
+"QPlainTextEdit {\n"
+"    background-color: #FFFFFF;\n"
+"  color:#212529;\n"
+"}\n"
+"QLabel {\n"
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  color: rgb(90, 93, 97);\n"
+"}\n"
+"QRadioButton {\n"
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  color: #212529;\n"
+"}\n"
+"QComboBox {\n"
+"  font-family: \"Courier New\";\n"
+"  font-size: 13px;\n"
+"  color: #212529;\n"
+"}\n"
+"QPushButton {\n"
+"  color: #212529;\n"
+"}\n"
+"\n"
+"")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(Dialog_REProductSettings)
         self.verticalLayout_5.setContentsMargins(8, 8, 8, 8)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
@@ -150,6 +172,8 @@ class Ui_Dialog_REProductSettings(object):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.delete_btn = QtWidgets.QPushButton(parent=Dialog_REProductSettings)
+        self.delete_btn.setAutoFillBackground(True)
+        self.delete_btn.setStyleSheet("")
         self.delete_btn.setObjectName("delete_btn")
         self.horizontalLayout_3.addWidget(self.delete_btn)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
@@ -179,7 +203,6 @@ class Ui_Dialog_REProductSettings(object):
         Dialog_REProductSettings.setTabOrder(self.name_v_input, self.create_btn)
         Dialog_REProductSettings.setTabOrder(self.create_btn, self.value_input)
         Dialog_REProductSettings.setTabOrder(self.value_input, self.tableView)
-        Dialog_REProductSettings.setTabOrder(self.tableView, self.delete_btn)
 
     def retranslateUi(self, Dialog_REProductSettings):
         _translate = QtCore.QCoreApplication.translate
