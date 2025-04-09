@@ -427,6 +427,7 @@ class RESettingService:
     @staticmethod
     def create(table_name, data):
         db = QSqlDatabase.database()
+        print(db.transaction())
         if not db.transaction():
             raise Exception("Failed to start transaction.")
         try:
@@ -438,9 +439,11 @@ class RESettingService:
                 VALUES ({placeholders})
             """
             query.prepare(sql)
-            now = datetime.datetime.now()
-            formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
-            data.setdefault("updated_at", formatted_time)
+            print(data)
+            print(sql)
+            # now = datetime.datetime.now()
+            # formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
+            # data.setdefault("updated_at", formatted_time)
             for key, value in data.items():
                 query.bindValue(f":{key}", value)
             if not query.exec():
@@ -605,12 +608,227 @@ class RESettingService:
         return None
 
 
+# class RETemplateService:
+#     @staticmethod
+#     def read(table_name, id):
+#         db = QSqlDatabase.database()
+#         query = QSqlQuery(db)
+#         query.prepare(f"SELECT * FROM {table_name} WHERE id = :id")
+#         query.bindValue(":id", id)
+#         if not query.exec():
+#             print(
+#                 f"Error reading from {table_name} with id [{id}]: {query.lastError().text()}"
+#             )
+#             return None
+#         if query.next():
+#             row = {}
+#             for i in range(query.record().count()):
+#                 row[query.record().fieldName(i)] = query.value(i)
+#             return row
+#         return None
+
+#     @staticmethod
+#     def read_all(table_name):
+#         db = QSqlDatabase.database()
+#         query = QSqlQuery(db)
+#         query.prepare(f"SELECT * FROM {table_name}")
+#         if not query.exec():
+#             print(
+#                 f"Error reading all from {table_name}: {query.lastError().text()}")
+#             return []
+#         results = []
+#         while query.next():
+#             row = {}
+#             for i in range(query.record().count()):
+#                 row[query.record().fieldName(i)] = query.value(i)
+#             results.append(row)
+#         return results
+
+#     @staticmethod
+#     def create(table_name, data):
+#         db = QSqlDatabase.database()
+#         if not db.transaction():
+#             raise Exception("Failed to start transaction.")
+#         columns = ", ".join(data.keys())
+#         placeholders = ", ".join([f":{key}" for key in data.keys()])
+#         sql = f"""
+# INSERT INTO {table_name} ({columns})
+# VALUES ({placeholders})
+#                 """
+#         try:
+#             query = QSqlQuery(db)
+#             query.prepare(sql)
+#             for key, value in data.items():
+#                 query.bindValue(f":{key}", value)
+#             if not query.exec():
+#                 db.rollback()
+#                 print(
+#                     f"Error inserting into {table_name}: {query.lastError().text()}")
+#                 return False
+#             if not db.commit():
+#                 print("Failed to commit transaction.")
+#                 return False
+#             return True
+#         except Exception as e:
+#             db.rollback()
+#             print("ERROR: ", e)
+#             return False
+
+#     @staticmethod
+#     def update(table_name, id, data):
+#         db = QSqlDatabase.database()
+#         if not db.transaction():
+#             raise Exception("Failed to start transaction.")
+#         set_clause = ", ".join([f"{key} = :{key}" for key in data.keys()])
+#         try:
+#             query = QSqlQuery(db)
+#             query.prepare(
+#                 f"""
+# UPDATE {table_name}
+# SET {set_clause}, updated_at = :updated_at
+# WHERE id = :id
+#                 """
+#             )
+#             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#             query.bindValue(":updated_at", now)
+#             query.bindValue(":id", id)
+#             for key, value in data.items():
+#                 query.bindValue(f":{key}", value)
+#             if not query.exec():
+#                 db.rollback()
+#                 print(
+#                     f"Error updating {table_name} with id [{id}]: {query.lastError().text()}"
+#                 )
+#                 return False
+#             if not db.commit():
+#                 print("Failed to commit transaction.")
+#                 return False
+#             return True
+#         except Exception as e:
+#             db.rollback()
+#             print("ERROR: ", e)
+#             return False
+
+#     @staticmethod
+#     def delete(table_name, id):
+#         db = QSqlDatabase.database()
+#         if not db.transaction():
+#             raise Exception("Failed to start transaction.")
+#         try:
+#             query = QSqlQuery(db)
+#             query.prepare(f"DELETE FROM {table_name} WHERE id = :id")
+#             query.bindValue(":id", id)
+#             if not query.exec():
+#                 db.rollback()
+#                 print(
+#                     f"Error deleting from {table_name} with id [{id}]: {query.lastError().text()}"
+#                 )
+#                 return False
+#             if not db.commit():
+#                 print("Failed to commit transaction.")
+#                 return False
+#             return True
+#         except Exception as e:
+#             db.rollback()
+#             print("ERROR: ", e)
+#             return False
+
+#     @staticmethod
+#     def is_tid_existed(table_name, tid):
+#         db = QSqlDatabase.database()
+#         query = QSqlQuery(db)
+#         query.prepare(
+#             f"""
+#             SELECT COUNT(*) FROM {table_name}
+#             WHERE tid = :tid
+#         """
+#         )
+#         query.bindValue(":tid", tid)
+#         if not query.exec():
+#             raise Exception(
+#                 f"Error checking existence in {table_name} for tid [{tid}]: {query.lastError().text()}"
+#             )
+#         if query.next():
+#             return query.value(0) > 0  # Returns True if record exists
+#         return False
+
+#     @staticmethod
+#     def get_columns(table_name):
+#         db = QSqlDatabase.database()
+#         if not db.isValid() or not db.isOpen():
+#             print("Database is not open or valid.")
+#             return False
+#         record = db.record(table_name)
+#         if record.isEmpty():
+#             print((f"Table {table_name} does not exist."))
+#             return False
+#         columns = []
+#         for i in range(record.count()):
+#             field_name = record.fieldName(i)
+#             columns.append(field_name)
+#         return columns
+
+#     @staticmethod
+#     def get_ids(table_name, option_id=-1):
+#         db = QSqlDatabase.database()
+#         if not db.isValid() or not db.isOpen():
+#             print("Database is not open or valid.")
+#             return False
+#         query = QSqlQuery(db)
+#         if option_id == -1:
+#             sql = f"SELECT id FROM {table_name}"
+#             query.prepare(sql)
+#         else:
+#             sql = f"SELECT id FROM {table_name} WHERE option_id=:option_id"
+#             query.prepare(sql)
+#             query.bindValue(":option_id", option_id)
+#         ids = []
+#         if query.exec():
+#             while query.next():
+#                 ids.append(query.value(0))
+#         else:
+#             print(
+#                 f"Error querying ID from '{table_name}': {query.lastError().text()}")
+#             return None
+#         return ids
+
+#     # @staticmethod
+#     # def get_ids(table_name, option):
+#     #     db = QSqlDatabase.database()
+#     #     if not db.isValid() or not db.isOpen():
+#     #         print("Database is not open or valid.")
+#     #         return False
+#     #     query = QSqlQuery(db)
+#     #     sql = f"SELECT id FROM {table_name} WHERE option="
+#     #     ids = []
+#     #     if query.exec(sql):
+#     #         while query.next():
+#     #             ids.append(query.value(0))
+#     #     else:
+#     #         print(
+#     #             f"Error querying ID from '{table_name}': {query.lastError().text()}")
+#     #         return None
+#     #     return ids
+
+
 class RETemplateService:
     @staticmethod
     def read(table_name, id):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"SELECT * FROM {table_name} WHERE id = :id")
+        query.prepare(f"""
+SELECT 
+                      main.id AS id,
+                      main.tid AS tid,
+                      options.id AS option_id,
+                      options.label_vi AS option_label_vi,
+                      options.label_en AS option_label_en,
+                      options.value AS option_value,
+                      main.updated_at as updated,
+FROM {table_name} main
+JOIN {constants.RE_SETTING_OPTIONS_TABLE} options ON main.option_id = options.id
+WHERE main.id = :id
+                      """)
         query.bindValue(":id", id)
         if not query.exec():
             print(
@@ -625,10 +843,21 @@ class RETemplateService:
         return None
 
     @staticmethod
-    def read_all(table_name):
+    def read_all(table_name, id):
         db = QSqlDatabase.database()
         query = QSqlQuery(db)
-        query.prepare(f"SELECT * FROM {table_name}")
+        query.prepare(f"""
+SELECT 
+                      main.id AS id,
+                      main.tid AS tid,
+                      options.id AS option_id,
+                      options.label_vi AS option_label_vi,
+                      options.label_en AS option_label_en,
+                      options.value AS option_value,
+                      main.updated_at as updated,
+FROM {table_name} main
+JOIN {constants.RE_SETTING_OPTIONS_TABLE} options ON main.option_id = options.id
+                      """)
         if not query.exec():
             print(
                 f"Error reading all from {table_name}: {query.lastError().text()}")
@@ -642,20 +871,18 @@ class RETemplateService:
         return results
 
     @staticmethod
-    def create(table_name, data):
+    def create(table_name, payload):
         db = QSqlDatabase.database()
         if not db.transaction():
             raise Exception("Failed to start transaction.")
-        columns = ", ".join(data.keys())
-        placeholders = ", ".join([f":{key}" for key in data.keys()])
         sql = f"""
-INSERT INTO {table_name} ({columns})
-VALUES ({placeholders})
-                """
+INSERT INTO {table_name} (id, tid, option_id, value)
+VALUES (id = :id, tid = :tid, option_id = :option_id, value = :value)
+"""
         try:
             query = QSqlQuery(db)
             query.prepare(sql)
-            for key, value in data.items():
+            for key, value in payload.items():
                 query.bindValue(f":{key}", value)
             if not query.exec():
                 db.rollback()
@@ -672,24 +899,22 @@ VALUES ({placeholders})
             return False
 
     @staticmethod
-    def update(table_name, id, data):
+    def update(table_name, payload):
         db = QSqlDatabase.database()
         if not db.transaction():
             raise Exception("Failed to start transaction.")
-        set_clause = ", ".join([f"{key} = :{key}" for key in data.keys()])
+        set_clause = ", ".join([f"{key} = :{key}" for key in payload.keys()])
         try:
             query = QSqlQuery(db)
             query.prepare(
                 f"""
 UPDATE {table_name}
-SET {set_clause}, updated_at = :updated_at
+SET {set_clause}, updated_at = (strftime('%Y-%m-%d %H:%M:%S', 'now'))
 WHERE id = :id
                 """
             )
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            query.bindValue(":updated_at", now)
             query.bindValue(":id", id)
-            for key, value in data.items():
+            for key, value in payload.items():
                 query.bindValue(f":{key}", value)
             if not query.exec():
                 db.rollback()
@@ -766,15 +991,21 @@ WHERE id = :id
         return columns
 
     @staticmethod
-    def get_ids(table_name):
+    def get_ids(table_name, option_id=-1):
         db = QSqlDatabase.database()
         if not db.isValid() or not db.isOpen():
             print("Database is not open or valid.")
             return False
         query = QSqlQuery(db)
-        sql = f"SELECT id FROM {table_name}"
+        if option_id == -1:
+            sql = f"SELECT id FROM {table_name}"
+            query.prepare(sql)
+        else:
+            sql = f"SELECT id FROM {table_name} WHERE option_id=:option_id"
+            query.prepare(sql)
+            query.bindValue(":option_id", option_id)
         ids = []
-        if query.exec(sql):
+        if query.exec():
             while query.next():
                 ids.append(query.value(0))
         else:

@@ -261,7 +261,7 @@ QPushButton {
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="name_v_input"/>
+                <widget class="QLineEdit" name="name_vi_input"/>
                </item>
               </layout>
              </item>
@@ -379,7 +379,7 @@ QPushButton {
   <tabstop>legal_s_radio</tabstop>
   <tabstop>furniture_s_radio</tabstop>
   <tabstop>name_en_input</tabstop>
-  <tabstop>name_v_input</tabstop>
+  <tabstop>name_vi_input</tabstop>
   <tabstop>create_btn</tabstop>
   <tabstop>value_input</tabstop>
   <tabstop>tableView</tabstop>

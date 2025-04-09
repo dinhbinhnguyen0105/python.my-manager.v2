@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
 )
 from PyQt6.QtCore import Qt
-from src.models.re_database import inittialize_re_database
+from src.models.re_database import initialize_re_database
 from src.controllers.re_controller import RESettingController
 
 
@@ -28,7 +28,8 @@ class SettingView(QMainWindow):
         main_layout = QVBoxLayout(central_widget)
 
         self.table_view = QTableView()
-        self.table_view.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
+        self.table_view.setSelectionBehavior(
+            QTableView.SelectionBehavior.SelectRows)
         # self.table_view.setSelectionMode(
         #     QTableView.SelectionMode.SingleSelection)
         main_layout.addWidget(self.table_view)
@@ -78,7 +79,8 @@ class SettingView(QMainWindow):
                 for record_id in record_ids:
                     self.controller.delete(record_id)
         else:
-            QMessageBox.warning(self, "Warning", "Please select a row to delete.")
+            QMessageBox.warning(
+                self, "Warning", "Please select a row to delete.")
 
     def get_selected_ids(self):
         selection_model = self.table_view.selectionModel()
@@ -102,7 +104,7 @@ if __name__ == "__main__":
     from src import constants  # đảm bảo constants có RE_SETTING_PROVINCES_TABLE
 
     app = QApplication(sys.argv)
-    inittialize_re_database()
+    initialize_re_database()
     window = SettingView()
     window.show()
     sys.exit(app.exec())

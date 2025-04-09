@@ -150,23 +150,26 @@ class REProduct(QWidget, Ui_REProduct):
         # description_default = RETemplateController.get(
         #     constants.RE_TEMPLATE_DESCRIPTION_TABLE, 0)
 
-        data.get("option")
+        # data.get("option")
+        print(data)
 
         self.init_product_title(data, False)
 
     def init_product_title(self, data, is_default=True):
-        if is_default:
-            title_template = RETemplateController.get(
-                constants.RE_TEMPLATE_TITLE_TABLE, 0)
-        else:
-            title_template_ids = RETemplateController.get_ids(
-                constants.RE_TEMPLATE_TITLE_TABLE)
-            title_template = RETemplateController.get(
-                constants.RE_TEMPLATE_TITLE_TABLE,
-                title_template_ids[randint(0, len(title_template_ids) - 1)]
-            )
-
-        print(title_template)
+        # self.template_controller = RETemplateController(
+        #     constants.RE_TEMPLATE_TITLE_TABLE)
+        # if is_default:
+        #     title_template = RETemplateController.get(
+        #         constants.RE_TEMPLATE_TITLE_TABLE, 0)
+        # else:
+        #     title_template_ids = RETemplateController.get_ids(
+        #         constants.RE_TEMPLATE_TITLE_TABLE)
+        #     title_template = RETemplateController.get(
+        #         constants.RE_TEMPLATE_TITLE_TABLE,
+        #         title_template_ids[randint(0, len(title_template_ids) - 1)]
+        #     )
+        print(RETemplateController.get_ids(
+            constants.RE_TEMPLATE_TITLE_TABLE, 2))
 
     def apply_column_filter(self, filter_text, column_index):
         if (

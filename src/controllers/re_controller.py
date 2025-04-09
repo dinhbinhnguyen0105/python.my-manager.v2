@@ -412,5 +412,16 @@ class RETemplateController(QObject):
             raise Exception("Failed to generate TID.")
 
     @staticmethod
-    def get_ids(table_name):
-        return RETemplateService.get_ids(table_name)
+    def get_ids(table_name, option_id=-1):
+        # ids = RETemplateService.get_ids(table_name)
+        # if option_id == -1:
+        #     return ids
+        # else:
+        #     new_ids = []
+        #     for id in ids:
+        #         if id.get("option_id")
+        return RETemplateService.get_ids(table_name, option_id)
+
+    # @staticmethod
+    # def get_ids(table_name, option):
+    #     pass

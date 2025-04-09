@@ -3,7 +3,7 @@ from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 from src import constants
 
 
-def inittialize_re_database():
+def initialize_re_database():
     db = QSqlDatabase.addDatabase("QSQLITE")
     db.setDatabaseName("./src/data/real_estate.db")
     if not db.open():
@@ -241,7 +241,7 @@ def _init_template():
     )
     if init_db_query.lastError().isValid():
         print(
-            f"Error creating table '{constants.RE_TEMPLATE_DESCRIPTION_TABLE}': {query.lastError().text()}"
+            f"Error creating table '{constants.RE_TEMPLATE_DESCRIPTION_TABLE}': {init_db_query.lastError().text()}"
         )
         return False
     # init default
