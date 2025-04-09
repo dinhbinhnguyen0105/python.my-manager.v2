@@ -764,3 +764,21 @@ WHERE id = :id
             field_name = record.fieldName(i)
             columns.append(field_name)
         return columns
+
+    @staticmethod
+    def get_ids(table_name):
+        db = QSqlDatabase.database()
+        if not db.isValid() or not db.isOpen():
+            print("Database is not open or valid.")
+            return False
+        query = QSqlQuery(db)
+        sql = f"SELECT id FROM {table_name}"
+        ids = []
+        if query.exec(sql):
+            while query.next():
+                ids.append(query.value(0))
+        else:
+            print(
+                f"Error querying ID from '{table_name}': {query.lastError().text()}")
+            return None
+        return ids

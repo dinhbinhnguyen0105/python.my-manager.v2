@@ -347,7 +347,16 @@ class RETemplateController(QObject):
 
     def get(self, record_id: int):
         try:
-            return RESettingService.read(self.table_name, record_id)
+            return RETemplateService.read(self.table_name, record_id)
+        except Exception as e:
+            error_msg = f"Error reading record: {e}"
+            QMessageBox.critical(None, "Error", error_msg)
+            return None
+
+    @staticmethod
+    def get(table_name, record_id):
+        try:
+            return RETemplateService.read(table_name, record_id)
         except Exception as e:
             error_msg = f"Error reading record: {e}"
             QMessageBox.critical(None, "Error", error_msg)
@@ -355,7 +364,7 @@ class RETemplateController(QObject):
 
     def update(self, record_id: int, data: dict):
         try:
-            if RESettingService.update(self.table_name, record_id, data):
+            if RETemplateService.update(self.table_name, record_id, data):
                 self.model.select()
             else:
                 QMessageBox.critical(
@@ -367,7 +376,7 @@ class RETemplateController(QObject):
 
     def delete(self, record_id: int):
         try:
-            if RESettingService.delete(self.table_name, record_id):
+            if RETemplateService.delete(self.table_name, record_id):
                 self.model.select()
             else:
                 QMessageBox.critical(
@@ -379,7 +388,7 @@ class RETemplateController(QObject):
 
     def get_all(self):
         try:
-            return RESettingService.read_all(self.table_name)
+            return RETemplateService.read_all(self.table_name)
         except Exception as e:
             error_msg = f"Error fetching all records: {e}"
             QMessageBox.critical(None, "Error", error_msg)
@@ -401,3 +410,7 @@ class RETemplateController(QObject):
         except Exception as e:
             QMessageBox.critical(None, "Error", str(e))
             raise Exception("Failed to generate TID.")
+
+    @staticmethod
+    def get_ids(table_name):
+        return RETemplateService.get_ids(table_name)

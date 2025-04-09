@@ -227,28 +227,8 @@ def _init_template():
             f"Error creating table '{constants.RE_TEMPLATE_TITLE_TABLE}': {init_db_query.lastError().text()}"
         )
         return False
-    if not db.transaction():
-        print("Failed to start transaction.")
-        return False
-    try:
-        init_default_query = QSqlQuery(db)
-        sql = f"""
-INSERT INTO {constants.RE_TEMPLATE_TITLE_TABLE} (id, tid, option_id, value)
-VALUES (:id, :tid, :option_id, :value)
-"""
-        init_default_query.prepare(sql)
-        init_default_query.bindValue(":id", 0)
-        init_default_query.bindValue(":tid", "T.T.default")
-        init_default_query.bindValue(":option_id", 1)
-        init_default_query.bindValue(":value", "")
 
-    except Exception as e:
-        db.rollback()
-        print("ERROR: ", e)
-        return False
-
-    return
-    QSqlQuery.exec(
+    init_db_query.exec(
         f"""CREATE TABLE IF NOT EXISTS {constants.RE_TEMPLATE_DESCRIPTION_TABLE} (
                id INTEGER PRIMARY KEY AUTOINCREMENT,
                tid TEXT UNIQUE,
@@ -259,27 +239,51 @@ VALUES (:id, :tid, :option_id, :value)
                 FOREIGN KEY (option_id) REFERENCES {constants.RE_SETTING_OPTIONS_TABLE}(id)
                )"""
     )
-    if query.lastError().isValid():
+    if init_db_query.lastError().isValid():
         print(
             f"Error creating table '{constants.RE_TEMPLATE_DESCRIPTION_TABLE}': {query.lastError().text()}"
         )
         return False
-    return True
+    # init default
+    if not db.transaction():
+        print("Failed to start transaction.")
+        return False
+    try:
+        init_title_default_query = QSqlQuery(db)
+        sql = f"""
+INSERT OR IGNORE INTO {constants.RE_TEMPLATE_TITLE_TABLE} (id, tid, option_id, value)
+VALUES (:id, :tid, :option_id, :value)
+"""
+        init_title_default_query.prepare(sql)
+        init_title_default_query.bindValue(":id", 0)
+        init_title_default_query.bindValue(":tid", "T.T.default")
+        init_title_default_query.bindValue(":option_id", 1)
+        init_title_default_query.bindValue(
+            ":value", "[<option>] <icon><icon> cần <option> <category> <price> <unit>, <ward>, <district>, <province> <icon><icon>")
+        if not init_title_default_query.exec():
+            db.rollback()
+            print(
+                f"Error inserting into '{constants.RE_TEMPLATE_TITLE_TABLE}': {init_title_default_query.lastError().text()}")
+            return False
 
-
-# query.prepare(
-#     f"""
-#                   INSERT OR IGNORE INTO {table_name}(label_vi, label_en, value)
-#                   VALUES (:label_vi, :label_en, :value)
-#                   """
-# )
-#    for field in fields:
-#         query.bindValue(":label_vi", field.get("label_vi", ""))
-#         query.bindValue(":label_en", field.get("label_en", ""))
-#         query.bindValue(":value", field.get("value", ""))
-#         if not query.exec():
-#             print(
-#                 f"Error inserting into '{table_name}': {query.lastError().text()}")
-#             return False
-
-#     return True
+        init_desc_default_query = QSqlQuery(db)
+        sql = f"""
+INSERT OR IGNORE INTO {constants.RE_TEMPLATE_DESCRIPTION_TABLE} (id, tid, option_id, value)
+VALUES (:id, :tid, :option_id, :value)
+"""
+        init_desc_default_query.prepare(sql)
+        init_desc_default_query.bindValue(":id", 0)
+        init_desc_default_query.bindValue(":tid", "T.D.default")
+        init_desc_default_query.bindValue(":option_id", 1)
+        init_desc_default_query.bindValue(
+            ":value", "ID: <PID>\n🗺 Vị trí: đường <street>, <ward>, <district>\n📏 Diện tích: <area>\n🏗 Kết cấu: <structure>\n🛌 Công năng: <function>\n📺 Nội thất: <furniture>\n🚗 Lộ giới: <building_line>\n📜 Pháp lý: <legal>\n<icon><icon> Mô tả:\n<description>\n------------\n💵 Giá: <price><unit>- Thương lượng chính chủ\n\n☎ Liên hệ: 0375.155.525 - Mr. Bình\n🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺\n🌺Ký gửi mua, bán - cho thuê, thuê bất động sản xin liên hệ 0375.155.525 - Mr. Bình🌺\n🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺🌺")
+        if not init_desc_default_query.exec():
+            db.rollback()
+            print(
+                f"Error inserting into '{constants.RE_TEMPLATE_DESCRIPTION_TABLE}': {init_desc_default_query.lastError().text()}")
+            return False
+        return True
+    except Exception as e:
+        db.rollback()
+        print("ERROR: ", e)
+        return False

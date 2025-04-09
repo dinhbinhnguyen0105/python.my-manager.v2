@@ -1,4 +1,5 @@
 # src/views/re_product.py
+from random import randint
 from PyQt6.QtCore import Qt, QPoint, QSortFilterProxyModel, QRegularExpression
 from PyQt6.QtWidgets import (
     QMessageBox,
@@ -9,7 +10,7 @@ from PyQt6.QtGui import QAction
 
 from src.ui.re_product_ui import Ui_REProduct
 from src.models.re_model import REProductRelationalModel
-from src.controllers.re_controller import REProductController, RESettingController
+from src.controllers.re_controller import REProductController, RESettingController, RETemplateController
 from src.views.dialog_re_product import DialogREProduct
 from src.views.dialog_re_template_settings import DialogRETemplateSetting
 from src.views.dialog_re_product_settings import DialogREProductSetting
@@ -139,8 +140,33 @@ class REProduct(QWidget, Ui_REProduct):
         if id is None:
             return
         data = self.product_controller.read_product(id)
-        image_paths = self.product_controller.get_image_paths(id)
-        # print(image_paths)
+        # image_paths = self.product_controller.get_image_paths(id)
+        self.set_default_content(data)
+
+    def set_default_content(self, data):
+        # template_controller = RETemplateController()
+        # title_default = RETemplateController.get(
+        #     constants.RE_TEMPLATE_TITLE_TABLE, 0)
+        # description_default = RETemplateController.get(
+        #     constants.RE_TEMPLATE_DESCRIPTION_TABLE, 0)
+
+        data.get("option")
+
+        self.init_product_title(data, False)
+
+    def init_product_title(self, data, is_default=True):
+        if is_default:
+            title_template = RETemplateController.get(
+                constants.RE_TEMPLATE_TITLE_TABLE, 0)
+        else:
+            title_template_ids = RETemplateController.get_ids(
+                constants.RE_TEMPLATE_TITLE_TABLE)
+            title_template = RETemplateController.get(
+                constants.RE_TEMPLATE_TITLE_TABLE,
+                title_template_ids[randint(0, len(title_template_ids) - 1)]
+            )
+
+        print(title_template)
 
     def apply_column_filter(self, filter_text, column_index):
         if (
