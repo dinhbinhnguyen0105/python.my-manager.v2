@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional, Type
+from typing import Any, Optional, Type
 from PyQt6.QtCore import QObject, pyqtSignal, pyqtSlot, QModelIndex
 from PyQt6.QtWidgets import (
     QDataWidgetMapper,

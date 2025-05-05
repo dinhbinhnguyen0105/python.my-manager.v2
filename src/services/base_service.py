@@ -1,21 +1,15 @@
-import threading
+# src/services/base_service.py
 from datetime import datetime
 from typing import List, Any, Dict, Optional, Type
 from contextlib import contextmanager
-
-from PyQt6.QtCore import Qt, QModelIndex
-
-from PyQt6.QtSql import QSqlQuery, QSqlDatabase, QSqlRecord, QSqlError
-
-from src import constants
+from PyQt6.QtCore import Qt
+from PyQt6.QtSql import QSqlDatabase, QSqlRecord
 
 from src.models.base_model import BaseModel
 
 
 @contextmanager
 def transaction(db: QSqlDatabase):
-    """Context manager for database transactions with automatic rollback on exception."""
-
     if not db.transaction():
         error_text = db.lastError().text() if db.isOpen() else "DB not open"
         print(f"[DB_TRANSACTION] Failed to start transaction. Error: {error_text}")
@@ -44,13 +38,6 @@ def transaction(db: QSqlDatabase):
 
 
 class BaseService:
-    """
-    Base class for services working with a QSqlTableModel instance.
-    Provides generic CRUD operations using the model's API.
-    """
-
-    # Class attribute to hold the specific data type (dataclass)
-    # Subclasses MUST set this attribute
     DATA_TYPE: Optional[Type[Any]] = None
 
     def __init__(self, model: BaseModel):
