@@ -808,20 +808,6 @@ padding-left: 4px;</string>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="action_upload_btn">
-                 <property name="text">
-                  <string>Upload</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="action_download_btn">
-                 <property name="text">
-                  <string>Download</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QPushButton" name="action_import_btn">
                  <property name="text">
                   <string>Import</string>
@@ -847,6 +833,20 @@ padding-left: 4px;</string>
                   </size>
                  </property>
                 </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="action_upload_btn">
+                 <property name="text">
+                  <string>Upload</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="action_download_btn">
+                 <property name="text">
+                  <string>Download</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>

@@ -9,8 +9,8 @@ from PyQt6.QtSql import QSqlRecord  # Import QSqlRecord
 # Import BaseModel
 from src.models.base_model import BaseModel
 
-# Import BaseServiceWithModel
-from src.services.base_service import BaseServiceWithModel
+# Import BaseModel
+from src.services.base_service import BaseModel
 
 # Import your specific types and services if needed for examples or type hinting in subclasses
 # from src.my_types import UserType, ...
@@ -32,15 +32,13 @@ class BaseController(QObject):
     # Emits a dictionary representing the data of the current record
     current_record_changed = pyqtSignal(dict)
 
-    def __init__(self, service: BaseServiceWithModel, parent: Optional[QObject] = None):
+    def __init__(self, service: BaseModel, parent: Optional[QObject] = None):
         """
         Initializes the BaseController with a service instance.
         """
         super().__init__(parent)
-        if not isinstance(service, BaseServiceWithModel):
-            raise TypeError(
-                "service must be an instance of BaseServiceWithModel or its subclass."
-            )
+        if not isinstance(service, BaseModel):
+            raise TypeError("service must be an instance of BaseModel or its subclass.")
 
         self.service = service  # Store the service instance
         self.model = service.model  # Get the model instance from the service
