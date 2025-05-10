@@ -294,8 +294,8 @@ class BaseService:
             print(f"[{self.__class__.__name__}.read] Database is not open.")
             return None
 
-        # Use the model's find_row_by_id method (assuming it exists in BaseModel)
-        row = self.model.find_row_by_id(record_id)
+        # Use the model's get_row_by_id method (assuming it exists in BaseModel)
+        row = self.model.get_row_by_id(record_id)
 
         if row != -1:
             record = self.model.record(row)
@@ -353,8 +353,8 @@ class BaseService:
             print(f"[{self.__class__.__name__}.update] Database is not open.")
             return False
 
-        # Use the model's find_row_by_id method
-        row = self.model.find_row_by_id(record_id)
+        # Use the model's get_row_by_id method
+        row = self.model.get_row_by_id(record_id)
         if row == -1:
             print(
                 f"[{self.__class__.__name__}.update] Record with id {record_id} not found in model."
@@ -452,8 +452,8 @@ class BaseService:
             print(f"[{self.__class__.__name__}.delete] Database is not open.")
             return False
 
-        # Use the model's find_row_by_id method
-        row = self.model.find_row_by_id(record_id)
+        # Use the model's get_row_by_id method
+        row = self.model.get_row_by_id(record_id)
         if row == -1:
             print(
                 f"[{self.__class__.__name__}.delete] Record with id {record_id} not found in model for deletion."
@@ -505,9 +505,9 @@ class BaseService:
         # Sort in reverse order so removing rows doesn't affect indices of rows still to be removed
         rows_to_delete = sorted(
             [
-                self.model.find_row_by_id(db_id)
+                self.model.get_row_by_id(db_id)
                 for db_id in record_ids
-                if self.model.find_row_by_id(db_id) != -1
+                if self.model.get_row_by_id(db_id) != -1
             ],
             reverse=True,
         )

@@ -33,7 +33,7 @@ class BaseModel(QSqlTableModel):
                 print(f"[BaseModel] Warning: Row index {row} is out of bounds.")
         return ids
 
-    def find_row_by_id(self, db_id: Any) -> int:
+    def get_row_by_id(self, db_id: Any) -> int:
         id_col_index = self.fieldIndex("id")
         if id_col_index == -1:
             print("[BaseModel] 'id' field not found for search.")

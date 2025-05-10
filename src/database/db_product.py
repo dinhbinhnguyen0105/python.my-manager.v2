@@ -72,11 +72,11 @@ def initialize_db_product():
                 SQL_CREATE_MISC_PRODUCT,
             ]:
                 if not query.exec(sql):
-                    error_msg = f"An error occurred while creating table: {query.lastError().text()}"
+                    error_msg = f"[initialize_db_product] An error occurred while creating table: {query.lastError().text()}"
                     db.rollback()
                     raise Exception(error_msg)
             if not db.commit():
-                error_msg = f"Cannot commit transaction: {db.lastError().text()}"
+                error_msg = f"[initialize_db_product] Cannot commit transaction: {db.lastError().text()}"
                 db.rollback()
                 raise Exception(error_msg)
             return True

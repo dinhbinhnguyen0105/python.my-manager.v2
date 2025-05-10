@@ -51,11 +51,11 @@ def initialize_db_user():
         if db.transaction():
             for sql in [SQL_CREATE_LISTED_PRODUCT_TABLE, SQL_CREATE_USER_TABLE]:
                 if not query.exec(sql):
-                    error_msg = f"An error occurred while creating table: {query.lastError().text()}"
+                    error_msg = f"[initialize_db_user] An error occurred while creating table: {query.lastError().text()}"
                     db.rollback()
                     raise Exception(error_msg)
             if not db.commit():
-                error_msg = f"Cannot commit transaction: {db.lastError().text()}"
+                error_msg = f"[initialize_db_user] Cannot commit transaction: {db.lastError().text()}"
                 db.rollback()
                 raise Exception(error_msg)
             return True
