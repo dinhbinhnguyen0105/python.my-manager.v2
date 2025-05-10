@@ -5,6 +5,7 @@ from typing import Optional
 
 @dataclass
 class UserType:
+    id: Optional[int]
     uid: Optional[str]
     username: Optional[str]
     password: Optional[str]
@@ -18,17 +19,16 @@ class UserType:
     mobile_ua: Optional[str]
     desktop_ua: Optional[str]
     status: Optional[int]
-    id: Optional[int]
     created_at: Optional[str]
     updated_at: Optional[str]
 
 
 @dataclass
 class ListedProductType:
+    id: Optional[int]
     pid: Optional[str]
     created_at: Optional[str]
     updated_at: Optional[str]
-    id: Optional[int]
 
 
 @dataclass
@@ -56,19 +56,19 @@ class REProductType:
 
 @dataclass
 class RETemplateType:
+    id: Optional[int]
     tid: Optional[str]
     action: Optional[int]
     part: Optional[int]
     content: Optional[str]
-    id: Optional[int]
 
 
 @dataclass
 class MiscProductType:
+    id: Optional[int]
     pid: Optional[str]
     category: Optional[int]
     title: Optional[str]
     description: Optional[str]
     created_at: Optional[str]
     updated_at: Optional[int]
-    id: Optional[int]
