@@ -4,7 +4,7 @@ from src.my_types import REProductType, UserType
 from src.database.db_product import initialize_db_product
 from src.database.db_user import initialize_db_user
 from src.models.base_model import BaseModel
-from src.models.model_product import ProductMiscModel, ProductREModel, TemplateREModel
+from src.models.model_product import MiscProductModel, REProductModel, RETemplateModel
 from src.models.model_user import UserModel, ListedProductModel
 from src.services.service_product import (
     ProductMiscService,
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         #         updated_at=None,
         #     ),
         # ]
-        # product_re_model = ProductREModel()
+        # product_re_model = REProductModel()
         # product_re_service = ProductREService(product_re_model)
         # # product_re_service.create(payload[6])
         # product_re_service.update(13, payload[0])

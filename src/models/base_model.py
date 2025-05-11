@@ -1,4 +1,4 @@
-# base_model.py
+# src/models/base_model.py
 from typing import List, Any
 from PyQt6.QtSql import QSqlTableModel
 from PyQt6.QtCore import Qt

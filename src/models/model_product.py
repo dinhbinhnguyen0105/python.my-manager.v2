@@ -5,7 +5,7 @@ from src import constants
 from src.models.base_model import BaseModel
 
 
-class ProductREModel(BaseModel):
+class REProductModel(BaseModel):
 
     def __init__(self, parent=None):
         db = QSqlDatabase.database(constants.CONNECTION_DB_PRODUCT)
@@ -27,7 +27,7 @@ class ProductREModel(BaseModel):
         return -1
 
 
-class ProductMiscModel(BaseModel):
+class MiscProductModel(BaseModel):
 
     def __init__(self, parent=None):
         db = QSqlDatabase.database(constants.CONNECTION_DB_PRODUCT)
@@ -49,7 +49,7 @@ class ProductMiscModel(BaseModel):
         return -1
 
 
-class TemplateREModel(BaseModel):
+class RETemplateModel(BaseModel):
 
     def __init__(self, parent=None):
         db = QSqlDatabase.database(constants.CONNECTION_DB_PRODUCT)

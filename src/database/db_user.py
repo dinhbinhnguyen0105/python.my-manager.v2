@@ -1,4 +1,4 @@
-# db_user.py
+# src/database/db_user.py
 from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 
 from src import constants
@@ -25,7 +25,8 @@ CREATE TABLE IF NOT EXISTS {constants.TABLE_USER} (
 """
 SQL_CREATE_LISTED_PRODUCT_TABLE = f"""
 CREATE TABLE IF NOT EXISTS {constants.TABLE_LISTED_PRODUCT} (
-    user_id  INTEGER PRIMARY KEY REFERENCES {constants.TABLE_USER}(id),
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER REFERENCES {constants.TABLE_USER}(id),
     pid TEXT,
     created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
     updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))

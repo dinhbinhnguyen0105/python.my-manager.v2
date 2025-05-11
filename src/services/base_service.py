@@ -16,7 +16,7 @@ def transaction(db: QSqlDatabase):
             if db.isOpen()
             else f"[{transaction.__name__}] db not open"
         )
-        print()
+        print(error_msg)
         raise RuntimeError(error_msg)
     try:
         yield db
@@ -26,8 +26,7 @@ def transaction(db: QSqlDatabase):
                 if db.isOpen()
                 else f"[{transaction.__name__}] db not open"
             )
-            print()
-            if db.isOpen() and db.transactionActivate():
+            if db.isOpen() and db.transaction():
                 db.rollback()
                 print(
                     f"[{transaction.__name__}] Attempted rollback after commit failure."
@@ -35,7 +34,7 @@ def transaction(db: QSqlDatabase):
             raise RuntimeError(error_msg)
     except Exception as e:
         print(f"[{transaction.__name__}] Exception during transaction: {e}")
-        if db.isOpen() and db.transactionActivate():
+        if db.isOpen() and db.transaction():
             if db.rollback():
                 print(f"[{transaction.__name__}] Transaction rolled back.")
             else:
@@ -179,6 +178,7 @@ class BaseService:
             return True
         else:
             error_msg = f"[{self.__class__.__name__}.create] Failed to submit changes to database. Error: {self.model.lastError().text()}. => return False"
+            print(error_msg)
             self.model.revertAll()
             return False
 
@@ -291,7 +291,7 @@ class BaseService:
         """Deletes a single record by ID using the model.
         Returns True on success, False on failure."""
         if not self._db.isOpen():
-            info_msg = f"[{self.__class__.__name__}.update] Database is not open. => return False"
+            info_msg = f"[{self.__class__.__name__}.delete] Database is not open. => return False"
             print(info_msg)
             return False
         row = self.model.get_row_by_id(record_id)
@@ -350,10 +350,10 @@ class BaseService:
             self.model.select()
             return True
         except Exception as e:
-            execption_msg = (
+            exception_msg = (
                 f"[{self.__class__.__name__}.delete_multiple] Transaction failed: {e}"
             )
-            print(execption_msg)
+            print(exception_msg)
             self.model.revertAll()
             self.model.select()
             return False
@@ -364,9 +364,66 @@ class BaseService:
         Returns True on success (all imported), False on failure (rollback).
         Automatically sets created_at and updated_at if they are None in payload
         and exist as columns."""
+        if self.DATA_TYPE is None:
+            info_msg = f"[{self.__class__.__name__}.import_data] DATA_TYPE is not set. Cannot import. => return False"
+            print(info_msg)
+            return False
+        if not all(isinstance(item, self.DATA_TYPE) for item in payload):
+            info_msg = f"[{self.__class__.__name__}.import_data] Invalid payload list type. Expected list of {self.DATA_TYPE.__name__}. => return False"
+            print(info_msg)
+            return False
+        if not payload:
+            info_msg = f"[{self.__class__.__name__}.import_data] Empty payload list."
+            print(info_msg)
+            return False
+        if not self._db.isOpen():
+            info_msg = f"[{self.__class__.__name__}.import_data] Database is not open."
+            print(info_msg)
+            return False
+        try:
+            with transaction(self._db):
+                for record_instance in payload:
+                    if hasattr(record_instance, "updated_at"):
+                        record_instance.updated_at = str(datetime.now())
+                    row = self.model.rowCount()
+                    if row < 0:
+                        error_msg = f"[{self.__class__.__name__}.import_data] Failed to insert row into model buffer. Error: {self.model.lastError().text()}"
+                        raise RuntimeError(error_msg)
+                    if not self.model.insertRow(row):
+                        error_msg = f"[{self.__class__.__name__}.import_data] Failed to insert row into model buffer. Error: {self.model.lastError().text()}"
+                        raise RuntimeError(error_msg)
+                    self._fill_row_from_payload(row, record_instance)
+                if not self.model.submitAll():
+                    error_msg = f"[{self.__class__.__name__}.import_data] Failed to submit insertions. Error: {self.model.lastError().text()}"
+                    raise RuntimeError(error_msg)
+            self.model.select()
+            return True
+        except Exception as e:
+            exception_msg = (
+                f"[{self.__class__.__name__}.import_data] Transaction failed: {e}"
+            )
+            print(exception_msg)
+            self.model.revertAll()
+            self.model.select()
+            return False
 
     def _find_by_model_index(self, find_method_name: str, value: Any) -> Optional[Any]:
         """Helper to find a single record based on a custom find method in the model.
         Intended for use by subclasses to implement methods like find_by_uid, find_by_email.
         find_method_name: The name of the method in the model (e.g., 'find_row_by_uid').
         value: The value to pass to the model's find method."""
+
+        if self.DATA_TYPE is None:
+            info_msg = f"[{self.__class__.__name__}._find_one_by_model_index] DATA_TYPE is not set. Cannot find record."
+            print(info_msg)
+            return None
+
+        find_method = getattr(self.model, find_method_name, None)
+        if find_method is None or not callable(find_method):
+            info_msg = f"[{self.__class__.__name__}._find_one_by_model_index] Error: Model does not have a callable method named '{find_method_name}'."
+            return None
+        row = find_method(value)
+        if row != -1:
+            record = self.model.record(row)
+            return self._map_record_to_datatype(record)
+        return None
