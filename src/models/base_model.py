@@ -1,7 +1,8 @@
 # src/models/base_model.py
 from typing import List, Any
 from PyQt6.QtSql import QSqlTableModel
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QAbstractTableModel, QModelIndex, QVariant
+from PyQt6.QtGui import QBrush, QColor
 
 
 class BaseModel(QSqlTableModel):
@@ -9,6 +10,7 @@ class BaseModel(QSqlTableModel):
         super().__init__(parent, db=db)
         self.setTable(table_name)
         self.setEditStrategy(QSqlTableModel.EditStrategy.OnManualSubmit)
+        self.status_col = self.fieldIndex("status")
         self.select()
 
     def flags(self, index):
@@ -17,6 +19,20 @@ class BaseModel(QSqlTableModel):
             | Qt.ItemFlag.ItemIsEnabled
             | Qt.ItemFlag.ItemIsEditable
         )
+
+    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole):
+        if role == Qt.ItemDataRole.DisplayRole:
+            return super().data(index, role)
+        if role == Qt.ItemDataRole.BackgroundRole and self.status_col != -1:
+            status_index = self.index(index.row(), self.status_col)
+            status = super().data(status_index, Qt.ItemDataRole.DisplayRole)
+            try:
+                status_val = int(status)
+            except Exception:
+                status_val = None
+            if status_val == 0:
+                return QBrush(QColor("#e7625f"))
+        return super().data(index, role)
 
     def get_record_ids(self, rows: List[int]) -> List[Any]:
         ids = []

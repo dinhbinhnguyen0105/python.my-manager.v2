@@ -1,4 +1,6 @@
-# src/views/user/dialog_user.py
+# src/views/user/dialog_create_user.py
+from datetime import datetime
+from typing import Dict
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QDialog
 from PyQt6.QtGui import QIntValidator
@@ -8,15 +10,16 @@ from src.my_types import UserType
 from src.ui.dialog_user_ui import Ui_Dialog_User
 
 
-class DialogUpdateUser(QDialog, Ui_Dialog_User):
+class DialogCreateUser(QDialog, Ui_Dialog_User):
     accepted_signal = pyqtSignal(UserType)
 
-    def __init__(self, user_info: UserType, parent=None):
-        super(DialogUpdateUser, self).__init__(parent)
+    def __init__(self, pre_payload: Dict, parent=None):
+        super(DialogCreateUser, self).__init__(parent)
+        self.pre_payload = pre_payload
+
         self.setupUi(self)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
-        self.user_info = user_info
-        self.setWindowTitle(f"Update user {self.user_info.uid} - ({self.user_info.id})")
+        self.setWindowTitle(f"Create new user")
 
         self.group_input.setValidator(QIntValidator())
         self.buttonBox.accepted.disconnect()
@@ -25,30 +28,28 @@ class DialogUpdateUser(QDialog, Ui_Dialog_User):
         self.set_input_fields()
 
     def set_input_fields(self):
-        self.uid_input.setText(self.user_info.uid)
-        self.status_checkbox.setChecked(self.user_info.status == 1)
-        self.username_input.setText(self.user_info.username)
-        self.password_input.setText(self.user_info.password)
-        self.two_fa_input.setText(self.user_info.two_fa)
-        self.email_input.setText(self.user_info.email)
-        self.email_password_input.setText(self.user_info.email_password)
-        self.phone_number_input.setText(self.user_info.phone_number)
-        self.note_input.setText(self.user_info.note)
-        self.type_input.setText(self.user_info.type)
-        self.group_input.setText(
-            str(self.user_info.user_group)
-            if isinstance(self.user_info.user_group, int)
-            else "-1"
-        )
-        self.mobile_ua_input.setText(self.user_info.mobile_ua)
-        self.desktop_ua_input.setText(self.user_info.desktop_ua)
-        self.updated_at_input.setText(self.user_info.updated_at)
-        self.created_at_input.setText(self.user_info.created_at)
+        self.status_checkbox.setChecked(True)
+        self.password_input.setText(self.pre_payload.get("password", ""))
+        self.group_input.setText(self.pre_payload.get("user_group", "-1"))
+        self.created_at_input.setText(self.pre_payload.get("created_at", ""))
+        self.updated_at_input.setText(self.pre_payload.get("updated_at", ""))
+        self.mobile_ua_input.setText(self.pre_payload.get("mobile_ua", ""))
+        self.desktop_ua_input.setText(self.pre_payload.get("desktop_ua", ""))
+
+        self.mobile_ua_button.setHidden(True)
+        self.desktop_ua_button.setHidden(True)
+
+        if self.password_input.text():
+            self.password_input.setDisabled(True)
+        if self.created_at_input.text():
+            self.created_at_input.setDisabled(True)
+        if self.updated_at_input.text():
+            self.updated_at_input.setDisabled(True)
 
     def handle_save(self):
         self.accepted_signal.emit(
             UserType(
-                id=self.user_info.id,
+                id=None,
                 uid=self.uid_input.text(),
                 username=self.username_input.text(),
                 password=self.password_input.text(),

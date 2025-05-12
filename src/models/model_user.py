@@ -29,6 +29,32 @@ class UserModel(BaseModel):
                 return row
         return -1
 
+    def get_uids_by_record_ids(self, record_ids: List[int]) -> List[str]:
+        """
+        Get the 'uid' values for the given list of record IDs.
+
+        Args:
+            record_ids (List[int]): List of record IDs.
+
+        Returns:
+            List[str]: List of 'uid' values corresponding to the record IDs.
+        """
+        uid_col_index = self.fieldIndex("uid")
+        id_col_index = self.fieldIndex("id")
+        if uid_col_index == -1 or id_col_index == -1:
+            print(
+                f"[{self.__class__.__name__}.get_uids_by_record_ids] 'uid' or 'id' field not found for search."
+            )
+            return []
+
+        uids = []
+        for row in range(self.rowCount()):
+            id_index = self.index(row, id_col_index)
+            uid_index = self.index(row, uid_col_index)
+            if self.data(id_index) in record_ids:
+                uids.append(self.data(uid_index))
+        return uids
+
 
 class ListedProductModel(BaseModel):
 

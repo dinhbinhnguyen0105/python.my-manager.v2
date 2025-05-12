@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog_User</class>
- <widget class="QDialog" name="Dialog_User">
+ <class>Dialog_UpdateUser</class>
+ <widget class="QDialog" name="Dialog_UpdateUser">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +14,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#Dialog_User{
+   <string notr="true">#Dialog_UpdateUser{
   font-family: &quot;Courier New&quot;;
   background-color: #FFFFFF;
 }
@@ -830,7 +830,7 @@ QCheckBox{
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog_User</receiver>
+   <receiver>Dialog_UpdateUser</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -846,7 +846,7 @@ QCheckBox{
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog_User</receiver>
+   <receiver>Dialog_UpdateUser</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

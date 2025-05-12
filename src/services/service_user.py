@@ -42,57 +42,53 @@ class UserService(BaseService):
     def find_by_uid(self, uid: str) -> Optional[UserType]:
         return self._find_by_model_index(find_method_name="find_row_by_uid", value=uid)
 
-    def toggle_status(self, user_id: str) -> bool:
+    def update_status(self, user_id: str, new_status: int) -> bool:
         """
-        Toggles the status of a user between active (1) and inactive (0).
+        Updates the status of a user.
 
         Args:
-            user_id (str): The unique identifier of the user whose status is to be toggled.
+            user_id (str): The unique identifier of the user whose status is to be updated.
+            new_status (int): The new status to set for the user. Must be either 0 or 1.
 
         Returns:
-            bool: True if the status was successfully toggled and updated in the database,
-                  False otherwise.
+            bool: True if the status update was successful, False otherwise.
 
-        Behavior:
-            - If the user with the given ID does not exist, logs an error message and returns False.
-            - If the user's current status is 0 (inactive), it will be toggled to 1 (active).
-            - If the user's current status is 1 (active), it will be toggled to 0 (inactive).
-            - If the user's current status is neither 0 nor 1, logs an error message and returns False.
-            - Attempts to update the user's status in the database. Logs success or failure of the update.
+        Raises:
+            ValueError: If `new_status` is not 0 or 1.
 
         Logs:
-            - Logs messages indicating the success or failure of the operation, including unexpected
-              status values or database update failures.
+            Logs a success message if the status update is successful.
+            Logs a failure message if the status update fails.
         """
+        print("new_status: ", new_status)
+        if new_status not in [0, 1]:
+            raise ValueError(
+                f"Invalid status value: {new_status}. Status must be 0 or 1."
+            )
         user = self.read(user_id)
-        if user is None:
-            print(
-                f"[{self.__class__.__name__}.toggle_status] User with ID '{user_id}' not found."
-            )
-            return False
-        current_status = user.status
-        if current_status == 0:
-            new_status = 1
-        elif current_status == 1:
-            new_status = 0
-        else:
-            print(
-                f"[{self.__class__.__name__}.toggle_status] Unexpected status value for user ID '{user_id}': {current_status}. Cannot toggle."
-            )
-            return False
-        user_db_id = user_id
         user.status = new_status
-        update_success = self.update(user_db_id, user)
+        update_success = self.update(user_id, user)
         if update_success:
             print(
-                f"[{self.__class__.__name__}.toggle_status] Successfully toggled status for user ID '{user_id}' to {new_status}."
+                f"[{self.__class__.__name__}.update_status] Successfully toggled status for user ID '{user_id}' to {new_status}."
             )
             return True
         else:
             print(
-                f"[{self.__class__.__name__}.toggle_status] Failed to update status for user ID '{user_id}'."
+                f"[{self.__class__.__name__}.update_status] Failed to update status for user ID '{user_id}'."
             )
             return False
+
+    def get_uids_by_record_ids(self, record_ids: List[int]) -> List[str]:
+        return self.model.get_uids_by_record_ids(record_ids)
+
+    def handle_new_desktop_ua(self) -> str:
+        ua_desktop = UserAgent(os="Mac OS X")
+        return ua_desktop.random
+
+    def handle_new_mobile_ua(self) -> str:
+        ua_mobile = UserAgent(os="iOS")
+        return ua_mobile.random
 
 
 class ListedProductService(BaseService):
@@ -218,116 +214,3 @@ class ListedProductService(BaseService):
             self.model.revertAll()
             self.model.select()
             return None
-
-
-if __name__ == "__main__":
-    from PyQt6.QtWidgets import QApplication
-    from src.database.db_user import initialize_db_user
-    from src.database.db_product import initialize_db_product
-    from src.models.model_user import UserModel
-    from src.models.model_product import REProductModel
-    from src.my_types import UserType
-
-    app = QApplication([])
-    if initialize_db_user() and initialize_db_product():
-        user_model = UserModel()
-        user_service = UserService(user_model)
-
-        # user_payload: List[UserType] = [
-        #     UserType(
-        #         id=None,
-        #         uid="uid_test_user_00",
-        #         username="username_test_user_00",
-        #         password="password_test_user_00",
-        #         two_fa="two_fa_test_user_00",
-        #         email="email_test_user_00",
-        #         email_password="email_password_test_user_00",
-        #         phone_number="phone_number_test_user_00",
-        #         note="note_test_user_00",
-        #         type="type_test_user_00",
-        #         user_group=1,
-        #         mobile_ua="mobile_ua_test_user_00",
-        #         desktop_ua="desktop_ua_test_user_00",
-        #         status=1,
-        #         created_at="2025-05-11 01:52:59.538249",
-        #         updated_at="2025-05-11 01:52:59.538249",
-        #     ),
-        #     UserType(
-        #         id=None,
-        #         uid="uid_test_user_01",
-        #         username="username_test_user_01",
-        #         password="password_test_user_01",
-        #         two_fa="two_fa_test_user_01",
-        #         email="email_test_user_01",
-        #         email_password="email_password_test_user_01",
-        #         phone_number="phone_number_test_user_01",
-        #         note="note_test_user_01",
-        #         type="type_test_user_01",
-        #         user_group=1,
-        #         mobile_ua="mobile_ua_test_user_01",
-        #         desktop_ua="desktop_ua_test_user_01",
-        #         status=1,
-        #         created_at="2025-05-11 01:52:59.538249",
-        #         updated_at="2025-05-11 01:52:59.538249",
-        #     ),
-        #     UserType(
-        #         id=None,
-        #         uid="uid_test_user_02",
-        #         username="username_test_user_02",
-        #         password="password_test_user_02",
-        #         two_fa="two_fa_test_user_02",
-        #         email="email_test_user_02",
-        #         email_password="email_password_test_user_02",
-        #         phone_number="phone_number_test_user_02",
-        #         note="note_test_user_02",
-        #         type="type_test_user_02",
-        #         user_group=1,
-        #         mobile_ua="mobile_ua_test_user_02",
-        #         desktop_ua="desktop_ua_test_user_02",
-        #         status=1,
-        #         created_at="2025-05-11 01:52:59.538249",
-        #         updated_at="2025-05-11 01:52:59.538249",
-        #     ),
-        #     UserType(
-        #         id=None,
-        #         uid="uid_test_user_03",
-        #         username="username_test_user_03",
-        #         password="password_test_user_03",
-        #         two_fa="two_fa_test_user_03",
-        #         email="email_test_user_03",
-        #         email_password="email_password_test_user_03",
-        #         phone_number="phone_number_test_user_03",
-        #         note="note_test_user_03",
-        #         type="type_test_user_03",
-        #         user_group=1,
-        #         mobile_ua="mobile_ua_test_user_03",
-        #         desktop_ua="desktop_ua_test_user_03",
-        #         status=1,
-        #         created_at="2025-05-11 01:52:59.538249",
-        #         updated_at="2025-05-11 01:52:59.538249",
-        #     ),
-        # ]
-        # user_service.import_data(payload=user_payload)
-        user_service.toggle_status(4)
-        _all = user_service.read_all()
-        for user in _all:
-            print(user)
-
-        # listed_payload: List[ListedProductType] = [
-        #     ListedProductType(
-        #         id=None,
-        #         user_id=1,
-        #         pid="pid_test_01",
-        #         created_at=None,
-        #         updated_at=None,
-        #     )
-        # ]
-
-        # listed_model = ListedProductModel()
-        # listed_service = ListedProductService(listed_model)
-        # print(listed_service.shift_record_by_user_id(1))
-        # # print(listed_service.create(listed_payload[0]))
-        # _all = listed_service.read_by_user_id(1)
-        # # _all = listed_service.read_all()
-        # for listed in _all:
-        #     print(listed)
