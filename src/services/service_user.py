@@ -1,4 +1,5 @@
 # src/services/service_user.py
+from fake_useragent import UserAgent
 from typing import Optional, List
 from src.services.base_service import BaseService
 from src.models.model_user import UserModel, ListedProductModel
@@ -14,6 +15,10 @@ class UserService(BaseService):
         super().__init__(model)
 
     def create(self, payload: UserType) -> bool:
+        ua_desktop = UserAgent(os="Mac OS X")
+        ua_mobile = UserAgent(os="iOS")
+        payload.mobile_ua = ua_mobile.random
+        payload.desktop_ua = ua_desktop.random
         return super().create(payload)
 
     def read(self, record_id: int) -> Optional[UserType]:

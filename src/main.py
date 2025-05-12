@@ -7,7 +7,7 @@ from src.app import Application
 def main():
     app = QApplication(sys.argv)
     scraper_app = Application()
-    scraper_app.run()
+    # scraper_app.run()
     sys.exit(app.exec())
 
 
