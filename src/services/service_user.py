@@ -2,8 +2,18 @@
 from fake_useragent import UserAgent
 from typing import Optional, List
 from src.services.base_service import BaseService
-from src.models.model_user import UserModel, ListedProductModel
-from src.my_types import UserType, ListedProductType
+from src.models.model_user import (
+    UserModel,
+    ListedProductModel,
+    UserSettingProxyModel,
+    UserSettingUDDModel,
+)
+from src.my_types import (
+    UserType,
+    ListedProductType,
+    UserSettingProxyType,
+    UserSettingUDDType,
+)
 
 
 class UserService(BaseService):
@@ -42,12 +52,12 @@ class UserService(BaseService):
     def find_by_uid(self, uid: str) -> Optional[UserType]:
         return self._find_by_model_index(find_method_name="find_row_by_uid", value=uid)
 
-    def update_status(self, user_id: str, new_status: int) -> bool:
+    def update_status(self, record_id: int, new_status: int) -> bool:
         """
         Updates the status of a user.
 
         Args:
-            user_id (str): The unique identifier of the user whose status is to be updated.
+            record_id (int): The unique identifier of the user whose status is to be updated.
             new_status (int): The new status to set for the user. Must be either 0 or 1.
 
         Returns:
@@ -60,22 +70,21 @@ class UserService(BaseService):
             Logs a success message if the status update is successful.
             Logs a failure message if the status update fails.
         """
-        print("new_status: ", new_status)
         if new_status not in [0, 1]:
             raise ValueError(
                 f"Invalid status value: {new_status}. Status must be 0 or 1."
             )
-        user = self.read(user_id)
+        user = self.read(record_id)
         user.status = new_status
-        update_success = self.update(user_id, user)
+        update_success = self.update(record_id, user)
         if update_success:
             print(
-                f"[{self.__class__.__name__}.update_status] Successfully toggled status for user ID '{user_id}' to {new_status}."
+                f"[{self.__class__.__name__}.update_status] Successfully toggled status for user ID '{record_id}' to {new_status}."
             )
             return True
         else:
             print(
-                f"[{self.__class__.__name__}.update_status] Failed to update status for user ID '{user_id}'."
+                f"[{self.__class__.__name__}.update_status] Failed to update status for user ID '{record_id}'."
             )
             return False
 
@@ -110,6 +119,12 @@ class ListedProductService(BaseService):
 
     def read_all(self) -> List[ListedProductType]:
         return super().read_all()
+
+    def delete(self, record_id: int) -> bool:
+        return super().delete(record_id)
+
+    def delete_multiple(self, record_ids):
+        return super().delete_multiple(record_ids)
 
     def read_by_user_id(self, user_id: int) -> List[ListedProductType]:
         """
@@ -214,3 +229,72 @@ class ListedProductService(BaseService):
             self.model.revertAll()
             self.model.select()
             return None
+
+
+class UserSettingUDDService(BaseService):
+    DATA_TYPE = UserSettingUDDType
+
+    def __init__(self, model: UserSettingUDDModel):
+        if not isinstance(model, UserSettingUDDModel):
+            raise TypeError(
+                "model must be an instance of UserSettingUDDType or its subclass."
+            )
+        super().__init__(model)
+
+    def read(self, record_id: int) -> UserSettingUDDType:
+        return super().read(record_id)
+
+    def create(self, payload: UserSettingUDDType):
+        return super().create(payload)
+
+    def read_all(self) -> List[UserSettingUDDType]:
+        return super().read_all()
+
+    def delete(self, record_id: int) -> bool:
+        return super().delete(record_id)
+
+    def delete_multiple(self, record_ids):
+        return super().delete_multiple(record_ids)
+
+    def set_selected(self, record_id: int) -> bool:
+        udds = self.read_all()
+        for udd in udds:
+            udd.is_selected = 0
+            self.update(udd.id, udd)
+
+        current_udd = self.read(record_id)
+        current_udd.is_selected = 1
+        update_success = self.update(record_id, current_udd)
+        if update_success:
+            print(
+                f"[{self.__class__.__name__}.set_selected] Successfully toggled status for udd ID '{record_id}' to 1."
+            )
+            return True
+        else:
+            print(
+                f"[{self.__class__.__name__}.set_selected] Failed to update status for udd ID '{record_id}'."
+            )
+            return False
+
+
+class UserSettingProxyService(BaseService):
+    DATA_TYPE = UserSettingProxyType
+
+    def __init__(self, model: UserSettingProxyModel):
+        if not isinstance(model, UserSettingProxyModel):
+            raise TypeError(
+                "model must be an instance of UserSettingProxyType or its subclass."
+            )
+        super().__init__(model)
+
+    def create(self, payload: UserSettingProxyType):
+        return super().create(payload)
+
+    def read_all(self) -> List[UserSettingProxyType]:
+        return super().read_all()
+
+    def delete(self, record_id: int) -> bool:
+        return super().delete(record_id)
+
+    def delete_multiple(self, record_ids):
+        return super().delete_multiple(record_ids)

@@ -98,7 +98,7 @@ QCheckBox{
           <item row="0" column="0">
            <widget class="QRadioButton" name="udd_radio">
             <property name="text">
-             <string>User dir</string>
+             <string>User data dir</string>
             </property>
            </widget>
           </item>

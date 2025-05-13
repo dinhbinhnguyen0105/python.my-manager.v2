@@ -13,6 +13,7 @@ from src.ui.page_user_ui import Ui_PageUser
 
 class PageUser(QWidget, Ui_PageUser):
     create_new_user_signal = pyqtSignal()
+    user_settings_signal = pyqtSignal()
 
     updated_users_signal = pyqtSignal(list)
     deleted_users_signal = pyqtSignal(list)
@@ -34,6 +35,7 @@ class PageUser(QWidget, Ui_PageUser):
 
     def setup_events(self):
         self.action_create_btn.clicked.connect(self.create_new_user_signal)
+        self.action_setting_btn.clicked.connect(self.user_settings_signal)
 
     def setup_ui(self):
         self.users_table.setModel(self.proxy_model)
@@ -43,15 +45,13 @@ class PageUser(QWidget, Ui_PageUser):
         )
         # self.users_table.setSelectionMode()
         self.users_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.users_table.customContextMenuRequested.connect(
-            self.on_context_menu_requested
-        )
+        self.users_table.customContextMenuRequested.connect(self.on_context_menu)
         self.users_table.setColumnHidden(0, True)
         self.users_table.setColumnHidden(1, True)
 
         self.users_table.setEditTriggers(self.users_table.EditTrigger.NoEditTriggers)
 
-    def on_context_menu_requested(self, pos: QPoint):
+    def on_context_menu(self, pos: QPoint):
         index = self.users_table.indexAt(pos)
         if index.isValid():
             menu = QMenu(self)

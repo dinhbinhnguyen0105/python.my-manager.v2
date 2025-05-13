@@ -160,7 +160,7 @@ class Ui_Dialog_UserSettings(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog_UserSettings.setWindowTitle(_translate("Dialog_UserSettings", "Dialog"))
         self.proxy_radio.setText(_translate("Dialog_UserSettings", "Proxy"))
-        self.udd_radio.setText(_translate("Dialog_UserSettings", "User dir"))
+        self.udd_radio.setText(_translate("Dialog_UserSettings", "User data dir"))
         self.udd_label.setText(_translate("Dialog_UserSettings", "value"))
         self.udd_is_selected_checkbox.setText(_translate("Dialog_UserSettings", "Is selected"))
         self.proxy_label.setText(_translate("Dialog_UserSettings", "value"))

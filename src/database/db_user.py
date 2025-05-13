@@ -32,6 +32,23 @@ CREATE TABLE IF NOT EXISTS {constants.TABLE_LISTED_PRODUCT} (
     updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
 )
 """
+SQL_CREATE_USER_SETTING_UDD_TABLE = f"""
+CREATE TABLE IF NOT EXISTS {constants.TABLE_USER_SETTING_UDD} (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+value TEXT UNIQUE NOT NULL,
+is_selected INTEGER,
+updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
+)
+"""
+SQL_CREATE_USER_SETTING_PROXY_TABLE = f"""
+CREATE TABLE IF NOT EXISTS {constants.TABLE_USER_SETTING_PROXY} (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+value TEXT UNIQUE NOT NULL,
+updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
+)
+"""
 
 
 def initialize_db_user():
@@ -50,7 +67,12 @@ def initialize_db_user():
 
     try:
         if db.transaction():
-            for sql in [SQL_CREATE_LISTED_PRODUCT_TABLE, SQL_CREATE_USER_TABLE]:
+            for sql in [
+                SQL_CREATE_LISTED_PRODUCT_TABLE,
+                SQL_CREATE_USER_TABLE,
+                SQL_CREATE_USER_SETTING_UDD_TABLE,
+                SQL_CREATE_USER_SETTING_PROXY_TABLE,
+            ]:
                 if not query.exec(sql):
                     error_msg = f"[initialize_db_user] An error occurred while creating table: {query.lastError().text()}"
                     db.rollback()

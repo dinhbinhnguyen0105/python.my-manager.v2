@@ -33,6 +33,23 @@ class ListedProductType:
 
 
 @dataclass
+class UserSettingProxyType:
+    id: Optional[int]
+    value: str
+    created_at: Optional[str]
+    updated_at: Optional[str]
+
+
+@dataclass
+class UserSettingUDDType:
+    id: Optional[int]
+    value: str
+    is_selected: int
+    created_at: Optional[str]
+    updated_at: Optional[str]
+
+
+@dataclass
 class REProductType:
     id: Optional[int]
     pid: Optional[str]
