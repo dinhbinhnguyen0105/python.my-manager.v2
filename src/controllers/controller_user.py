@@ -2,7 +2,7 @@
 from typing import Optional, List
 from datetime import datetime
 import string, secrets
-from PyQt6.QtCore import QObject, pyqtSlot
+from PyQt6.QtCore import pyqtSlot
 from src.controllers.base_controller import BaseController
 from src.services.service_user import (
     UserService,

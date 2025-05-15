@@ -1,6 +1,9 @@
 # my_types.py
+
 from dataclasses import dataclass
 from typing import Optional
+
+from PyQt6.QtCore import QRunnable
 
 
 @dataclass
@@ -90,3 +93,26 @@ class MiscProductType:
     description: Optional[str]
     created_at: Optional[str]
     updated_at: Optional[int]
+
+
+@dataclass
+class RobotTaskType:
+    user_info: UserType
+    udd: str
+    action_name: str
+
+
+@dataclass
+class InProgressType(RobotTaskType):
+    worker: Optional[QRunnable]
+    proxy_url: str
+
+
+@dataclass
+class FailedType(RobotTaskType):
+    error_message: str
+
+
+@dataclass
+class SucceededType(RobotTaskType):
+    is_success: bool

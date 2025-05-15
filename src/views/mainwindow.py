@@ -11,6 +11,7 @@ from src.controllers.controller_user import (
     UserSettingUDDController,
     UserSettingProxyController,
 )
+from src.controllers.controller_robot import RobotController
 
 from src.views.product.page_re_product import PageREProduct
 from src.views.user.dialog_update_user import DialogUpdateUser
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         user_controller: UserController,
         setting_udd_controller: UserSettingUDDController,
         setting_proxy_controller: UserSettingProxyController,
+        robot_controller: RobotController,
         parent=None,
     ):
         super(MainWindow, self).__init__(parent)
@@ -33,12 +35,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.user_controller = user_controller
         self.setting_proxy_controller = setting_proxy_controller
         self.setting_udd_controller = setting_udd_controller
+        self.robot_controller = robot_controller
         # self.user_controller.user_service.model
         # self.user_controller.operation_success_signal.connect(self.operation_success)
         for controller in [
             self.user_controller,
             self.setting_proxy_controller,
             self.setting_udd_controller,
+            self.robot_controller,
         ]:
             controller.operation_success_signal.connect(
                 lambda msg: QMessageBox.information(None, "Success", msg)
@@ -170,6 +174,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot(list)
     def on_launch_users(self, selected_ids: List[int]):
+        self.robot_controller.handle_launch_browser(selected_ids)
         pass
 
     @pyqtSlot(list)

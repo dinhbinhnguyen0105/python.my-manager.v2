@@ -15,11 +15,13 @@ from src.services.service_user import (
     UserSettingUDDService,
     UserSettingProxyService,
 )
+from src.services.service_robot import RobotService
 from src.controllers.controller_user import (
     UserController,
     UserSettingUDDController,
     UserSettingProxyController,
 )
+from src.controllers.controller_robot import RobotController
 
 from src.views.mainwindow import MainWindow
 
@@ -52,10 +54,17 @@ class Application:
             self.user_Setting_udd_service
         )
 
+        self.robot_controller = RobotController(
+            self.user_service,
+            self.user_setting_proxy_service,
+            self.user_Setting_udd_service,
+        )
+
         self.mainWindow = MainWindow(
             user_controller=self.user_controller,
             setting_udd_controller=self.user_setting_udd_controller,
             setting_proxy_controller=self.user_setting_proxy_controller,
+            robot_controller=self.robot_controller,
         )
         self.mainWindow.show()
         print("My manager application is running ...")

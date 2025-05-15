@@ -276,6 +276,13 @@ class UserSettingUDDService(BaseService):
             )
             return False
 
+    def get_selected(self) -> Optional[str]:
+        udds = self.read_all()
+        for udd in udds:
+            if udd.is_selected == 1:
+                return udd.value
+        return None
+
 
 class UserSettingProxyService(BaseService):
     DATA_TYPE = UserSettingProxyType
