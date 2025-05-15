@@ -90,9 +90,7 @@ class RobotService(QObject):
 
         self._try_start_tasks()
         if not self._pending_task and not self._in_progress:
-            # TODO: Emit signal for all tasks finished
-            # self.all_tasks_finished.emit()
-            pass
+            self.tasks_finished.emit()
 
     @pyqtSlot(SucceededType)
     def on_success(self, succeeded_info: SucceededType):
@@ -111,7 +109,7 @@ class RobotService(QObject):
         processed_count = len(self._succeeded) + len(self._failed)
         if self._total_tasks > 0 and processed_count != self._total_tasks:
             print(
-                f"[{self.__class__.__name__}.check_if_done] Warning: Process count ({processed_count}) does not match total tasks ({self.total_tasks})."
+                f"[{self.__class__.__name__}.check_if_done] Warning: Process count ({processed_count}) does not match total tasks ({self._total_tasks})."
             )
             return False
         return is_done

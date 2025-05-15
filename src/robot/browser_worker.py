@@ -35,7 +35,7 @@ class BrowserWorker(QRunnable):
                 print(
                     f"Runing uid [{self._task.user_info.uid}] with proxy [{self._proxy_url}]."
                 )
-                for _ in range(3):
+                for _ in range(10):
                     sleep(1)
                     print(
                         f"[{self._task.user_info.uid}] Running {self._task.action_name} with proxy [{self._proxy_url}]."

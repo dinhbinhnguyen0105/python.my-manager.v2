@@ -58,7 +58,7 @@ class RobotController(BaseController):
             print(
                 f"[{self.__class__.__name__}.handle_launch_browser] Launching browser is already running. Adding task to the queue."
             )
-            self._current_task_progress.add_tasks(tasks)
+            self._current_task_progress.add_tasks(tasks, proxies)
         else:
             print(
                 f"[{self.__class__.__name__}.handle_launch_browser] Starting new launch browser tasks."
@@ -84,7 +84,7 @@ class RobotController(BaseController):
 
     @pyqtSlot()
     def on_tasks_finished(self):
-        pass
+        self.operation_success_signal.emit("All tasks finished successfully.")
 
     def _get_udd_container(self):
         udd_selected = self.udd_service.get_selected()
