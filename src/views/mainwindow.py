@@ -174,6 +174,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     @pyqtSlot(list)
     def on_launch_users(self, selected_ids: List[int]):
+        self.robot_controller.set_headless(False)
         self.robot_controller.handle_launch_browser(selected_ids)
         pass
 

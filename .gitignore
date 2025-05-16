@@ -1,5 +1,6 @@
 .venv
 .vscode
+src/repositories/udds
 dist
 build
 __pycache__/

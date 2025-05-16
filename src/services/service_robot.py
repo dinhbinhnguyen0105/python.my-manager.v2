@@ -32,6 +32,7 @@ class RobotService(QObject):
 
     @pyqtSlot(list, list)
     def add_tasks(self, tasks: List[RobotTaskType], list_proxy: List[str]):
+        print(list_proxy)
         existing_uids = set(ptask.user_info.uid for ptask in self._pending_task) | set(
             ip_task_data.user_info.uid for ip_task_data in self._in_progress.values()
         )
@@ -70,6 +71,7 @@ class RobotService(QObject):
             worker.signals.finished.connect(self.on_finished)
 
             self._in_progress[task.user_info.uid] = InProgressType(
+                headless=task.headless,
                 user_info=task.user_info,
                 udd=task.udd,
                 action_name=task.action_name,
@@ -84,9 +86,9 @@ class RobotService(QObject):
         self._try_start_tasks()
 
     @pyqtSlot(RobotTaskType)
-    def on_finished(self, taks_info: RobotTaskType):
-        if taks_info.user_info.uid in self._in_progress:
-            del self._in_progress[taks_info.user_info.uid]
+    def on_finished(self, task_info: RobotTaskType):
+        if task_info.user_info.uid in self._in_progress:
+            del self._in_progress[task_info.user_info.uid]
 
         self._try_start_tasks()
         if not self._pending_task and not self._in_progress:
@@ -100,9 +102,22 @@ class RobotService(QObject):
     def on_error(self, error_info: FailedType):
         print(error_info)
 
-    @pyqtSlot(str)
-    def on_error_proxy(self, invalid_proxy: str):
-        print(invalid_proxy)
+    @pyqtSlot(dict)
+    def on_error_proxy(self, error_info: dict):
+        if error_info.get("status") == 101:
+            print(
+                f"[{self.__class__.__name__}.on_error_proxy] Warning: {error_info.get('message')}. Sleeping for 60 seconds."
+            )
+            import time
+
+            time.sleep(60)
+            if error_info.get("proxy_url"):
+                self._proxy_pool.append(error_info.get("proxy_url"))
+                self._pending_task.append(error_info.get("task"))
+        elif error_info.get("status") == 102:
+            print(
+                f"[{self.__class__.__name__}.on_error_proxy] Warning: {error_info.get('message')}."
+            )
 
     def check_if_done(self) -> bool:
         is_done = not self._pending_task and not self._in_progress

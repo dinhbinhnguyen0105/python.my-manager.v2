@@ -30,6 +30,7 @@ class RobotController(BaseController):
         # self.robot_service: RobotService = RobotService()
         self.proxy_service = proxy_service
         self.udd_service = udd_service
+        self._headless = False
 
     def handle_launch_browser(self, record_ids: List[int]):
         udd_container = self._get_udd_container()
@@ -48,6 +49,7 @@ class RobotController(BaseController):
                         udd_container,
                         str(user_info.id),
                     ),
+                    headless=self._headless,
                     action_name="launch_browser",
                 )
                 tasks.append(task)
@@ -108,3 +110,6 @@ class RobotController(BaseController):
         for proxy_info in proxy_infos:
             proxies.append(proxy_info.value)
         return proxies
+
+    def set_headless(self, headless: bool):
+        self._headless = headless
