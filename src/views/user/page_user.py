@@ -17,7 +17,7 @@ class PageUser(QWidget, Ui_PageUser):
 
     updated_users_signal = pyqtSignal(list)
     deleted_users_signal = pyqtSignal(list)
-    launch_users_signal = pyqtSignal(list)
+    launch_users_signal = pyqtSignal(list, bool)
     check_users_signal = pyqtSignal(list)
 
     def __init__(self, user_model: UserModel, parent=None):
@@ -55,13 +55,17 @@ class PageUser(QWidget, Ui_PageUser):
         index = self.users_table.indexAt(pos)
         if index.isValid():
             menu = QMenu(self)
-            launch_action = QAction("Launch", self)
+            launch_as_desktop_action = QAction("Launch as desktop", self)
+            launch_as_mobile_action = QAction("Launch as mobile", self)
             check_action = QAction("Check live", self)
             edit_action = QAction("Edit", self)
             delete_action = QAction("Delete", self)
 
-            launch_action.triggered.connect(
-                lambda: self.on_item_context_clicked("launch")
+            launch_as_desktop_action.triggered.connect(
+                lambda: self.on_item_context_clicked("launch-desktop")
+            )
+            launch_as_mobile_action.triggered.connect(
+                lambda: self.on_item_context_clicked("launch-mobile")
             )
             check_action.triggered.connect(
                 lambda: self.on_item_context_clicked("check")
@@ -70,7 +74,8 @@ class PageUser(QWidget, Ui_PageUser):
             delete_action.triggered.connect(
                 lambda: self.on_item_context_clicked("delete")
             )
-            menu.addAction(launch_action)
+            menu.addAction(launch_as_desktop_action)
+            menu.addAction(launch_as_mobile_action)
             menu.addAction(check_action)
             menu.addAction(edit_action)
             menu.addAction(delete_action)
@@ -80,13 +85,19 @@ class PageUser(QWidget, Ui_PageUser):
     def on_item_context_clicked(self, action_name: str):
         selected_ids = self.get_selected_id()
         action_method = {
-            "launch": self.launch_users_signal,
+            "launch-desktop": self.launch_users_signal,
+            "launch-mobile": self.launch_users_signal,
             "check": self.check_users_signal,
             "edit": self.updated_users_signal,
             "delete": self.deleted_users_signal,
         }
         if action_name in action_method.keys():
-            action_method[action_name].emit(selected_ids)
+            if action_name == "launch-desktop":
+                action_method[action_name].emit(selected_ids, False)
+            elif action_name == "launch-mobile":
+                action_method[action_name].emit(selected_ids, True)
+            else:
+                action_method[action_name].emit(selected_ids)
 
     def get_selected_id(self) -> List[int]:
         selected_rows = self.users_table.selectionModel().selectedRows()

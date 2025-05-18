@@ -1,4 +1,6 @@
 # src/services/service_user.py
+import os
+import shutil
 from fake_useragent import UserAgent
 from typing import Optional, List
 from src.services.base_service import BaseService
@@ -23,6 +25,8 @@ class UserService(BaseService):
         if not isinstance(model, UserModel):
             raise TypeError("model must be an instance of UserModel or its subclass.")
         super().__init__(model)
+        self.listed_product_service = None
+        self.udd_service = None
 
     def create(self, payload: UserType) -> bool:
         ua_desktop = UserAgent(os="Mac OS X")
@@ -40,10 +44,20 @@ class UserService(BaseService):
     def update(self, record_id: int, payload: UserType) -> bool:
         return super().update(record_id, payload)
 
-    def delete(self, record_id: int) -> bool:
+    def delete(self, udd_service, record_id: int) -> bool:
+        udd_container = udd_service.get_selected()
+        if not os.path.exists(os.path.abspath(udd_container)):
+            info_msg = f"[{self.__class__.__name__}.delete] Failed get udd container."
+            print(info_msg)
+            return False
+
+        udd_path = os.path.join(os.path.abspath(udd_container), str(record_id))
+        if os.path.exists(udd_path):
+            shutil.rmtree(udd_path)
         return super().delete(record_id)
 
     def delete_multiple(self, record_ids):
+        self.listed_product_service.delete_multiple(record_ids)
         return super().delete_multiple(record_ids)
 
     def import_data(self, payload: List[UserType]):
@@ -305,3 +319,8 @@ class UserSettingProxyService(BaseService):
 
     def delete_multiple(self, record_ids):
         return super().delete_multiple(record_ids)
+
+
+def delete_directory(record_id):
+    udd_service = UserSettingUDDService(UserSettingUDDModel())
+    print(udd_service.get_selected())

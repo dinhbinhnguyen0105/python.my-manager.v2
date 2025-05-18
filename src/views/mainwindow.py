@@ -170,12 +170,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.StandardButton.Yes,
         )
         if reply == QMessageBox.StandardButton.Yes:
-            self.user_controller.handle_delete_user(selected_id)
+            self.user_controller.handle_delete_user(
+                self.setting_udd_controller,
+                selected_id,
+            )
 
-    @pyqtSlot(list)
-    def on_launch_users(self, selected_ids: List[int]):
-        self.robot_controller.set_headless(False)
-        self.robot_controller.handle_launch_browser(selected_ids)
+    @pyqtSlot(list, bool)
+    def on_launch_users(self, selected_ids: List[int], is_mobile: bool):
+        self.robot_controller.handle_launch_browser(
+            selected_ids, headless=False, is_mobile=is_mobile
+        )
         pass
 
     @pyqtSlot(list)

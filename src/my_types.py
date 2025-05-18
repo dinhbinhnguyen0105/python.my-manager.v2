@@ -100,6 +100,7 @@ class RobotTaskType:
     user_info: UserType
     udd: str
     headless: bool
+    is_mobile: bool
     action_name: str
 
 

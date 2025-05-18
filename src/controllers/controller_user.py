@@ -83,9 +83,9 @@ class UserController(BaseController):
             )
             return False
 
-    def handle_delete_user(self, record_id) -> bool:
+    def handle_delete_user(self, udd_controller, record_id) -> bool:
         try:
-            if not self.service.delete(record_id):
+            if not self.service.delete(udd_controller.service, record_id):
                 self.operation_warning_signal.emit(
                     f"Failed to delete user (id: {record_id}). Check logs for details."
                 )

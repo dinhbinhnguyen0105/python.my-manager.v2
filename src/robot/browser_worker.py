@@ -56,6 +56,11 @@ class BrowserWorker(QRunnable):
                 with sync_playwright() as p:
                     context = p.chromium.launch_persistent_context(
                         user_data_dir=self.task.udd,
+                        user_agent=(
+                            self.task.user_info.mobile_ua
+                            if self.task.is_mobile
+                            else self.task.user_info.desktop_ua
+                        ),
                         headless=self.task.headless,
                         args=["--disable-blink-features=AutomationControlled"],
                         ignore_default_args=["--enable-automation"],

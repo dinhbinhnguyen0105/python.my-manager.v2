@@ -27,9 +27,10 @@ class RobotController(BaseController):
         self._current_task_progress: Optional[RobotService] = None
         self.proxy_service = proxy_service
         self.udd_service = udd_service
-        self._headless = False
 
-    def handle_launch_browser(self, record_ids: List[int]):
+    def handle_launch_browser(
+        self, record_ids: List[int], headless: bool, is_mobile: bool
+    ):
         udd_container = self._get_udd_container()
         if not udd_container:
             return False
@@ -46,7 +47,8 @@ class RobotController(BaseController):
                         udd_container,
                         str(user_info.id),
                     ),
-                    headless=self._headless,
+                    headless=headless,
+                    is_mobile=is_mobile,
                     action_name="launch_browser",
                 )
                 tasks.append(task)
@@ -111,6 +113,3 @@ class RobotController(BaseController):
         for proxy_info in proxy_infos:
             proxies.append(proxy_info.value)
         return proxies
-
-    def set_headless(self, headless: bool):
-        self._headless = headless
