@@ -13,8 +13,6 @@ from src.services.service_user import (
     UserSettingUDDService,
 )
 
-# from src.robot.browser_worker import BrowserWorker
-
 
 class RobotController(BaseController):
     def __init__(
@@ -27,7 +25,6 @@ class RobotController(BaseController):
         super().__init__(service, parent)
         self.service = service
         self._current_task_progress: Optional[RobotService] = None
-        # self.robot_service: RobotService = RobotService()
         self.proxy_service = proxy_service
         self.udd_service = udd_service
         self._headless = False
@@ -66,10 +63,14 @@ class RobotController(BaseController):
                 f"[{self.__class__.__name__}.handle_launch_browser] Starting new launch browser tasks."
             )
             self._current_task_progress = RobotService(self)
-            self._current_task_progress.set_max_workers(8)
-            self._current_task_progress.task_succeeded.connect(self.on_task_succeeded)
-            self._current_task_progress.task_failed.connect(self.on_task_failed)
-            self._current_task_progress.tasks_finished.connect(self.on_tasks_finished)
+            self._current_task_progress.set_max_worker(len(record_ids))
+            self._current_task_progress.task_succeeded_signal.connect(
+                self.on_task_succeeded
+            )
+            self._current_task_progress.task_failed_signal.connect(self.on_task_failed)
+            self._current_task_progress.all_task_finished.connect(
+                self.on_tasks_finished
+            )
 
             self._current_task_progress.add_tasks(
                 tasks,

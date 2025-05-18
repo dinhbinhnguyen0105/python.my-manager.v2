@@ -1,24 +1,15 @@
 from playwright.sync_api import Page
-
-from PyQt6.QtCore import QRunnable, QObject, pyqtSignal
-from src.my_types import RobotTaskType, SucceededType, FailedType
+from src.my_types import RobotTaskType, BrowserWorkerSignals
 
 
-def do_launch_browser(page: Page, task: RobotTaskType, signals):
+def do_launch_browser(page: Page, task: RobotTaskType, signals: BrowserWorkerSignals):
     try:
+        signals.progress_signal.emit(task, "Launching ...", 0, 1)
         page.goto("http://httpbin.org/ip")
         page.wait_for_event("close", timeout=0)
+        signals.progress_signal.emit(task, "Closed!", 1, 1)
     except Exception as e:
-        print(f"[{task.action_name}] Error: {e}")
-        signals.error_signal.emit(
-            FailedType(
-                user_info=task.user_info,
-                udd=task.udd,
-                headless=task.headless,
-                action_name=task.action_name,
-                error_message="Error while launching browser. Check log.",
-            )
-        )
+        signals.error_signal.emit(task, str(e))
 
 
 ACTION_MAP = {
