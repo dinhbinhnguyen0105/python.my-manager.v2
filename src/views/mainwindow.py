@@ -76,6 +76,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setup_ui(self):
         pass
 
+    def setup_events(self):
+        # self.sidebar_re_btn.clicked.connect(lambda : self.content_container.setCurrentIndex())
+        pass
+
     @pyqtSlot()
     def data_changed(self):
         pass
