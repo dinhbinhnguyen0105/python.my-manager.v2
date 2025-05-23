@@ -59,6 +59,7 @@ class CheckLiveWorker(QRunnable):
             if status_code != 200:
                 error_msg = f"HTTP Error {status_code} for UID {self.uid}. Response: {body[:200]}..."
                 self.signals.error_signal.emit(self.uid, error_msg)
+                self.signals.success_signal.emit(self.uid, False)
             else:
                 try:
                     data = json.loads(body)

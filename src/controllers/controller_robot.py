@@ -50,6 +50,7 @@ class RobotController(BaseController):
                     headless=headless,
                     is_mobile=is_mobile,
                     action_name="launch_browser",
+                    action_payload={"url": "http://httpbin.org/ip"},
                 )
                 tasks.append(task)
         if (

@@ -102,6 +102,7 @@ class RobotTaskType:
     headless: bool
     is_mobile: bool
     action_name: str
+    action_payload: dict
 
 
 class BrowserWorkerSignals(QObject):
@@ -111,3 +112,11 @@ class BrowserWorkerSignals(QObject):
     proxy_unavailable_signal = pyqtSignal(RobotTaskType, str)
     proxy_not_ready_signal = pyqtSignal(RobotTaskType, str)
     progress_signal = pyqtSignal(RobotTaskType, str, int, int)
+
+
+"""
+action_name = "marketplace
+{
+
+}
+"""

@@ -36,8 +36,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setting_proxy_controller = setting_proxy_controller
         self.setting_udd_controller = setting_udd_controller
         self.robot_controller = robot_controller
-        # self.user_controller.user_service.model
-        # self.user_controller.operation_success_signal.connect(self.operation_success)
         for controller in [
             self.user_controller,
             self.setting_proxy_controller,
@@ -180,7 +178,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.robot_controller.handle_launch_browser(
             selected_ids, headless=False, is_mobile=is_mobile
         )
-        pass
 
     @pyqtSlot(list)
     def on_check_users(self, selected_ids: List[int]):

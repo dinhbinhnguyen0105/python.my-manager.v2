@@ -11,6 +11,26 @@ from src.models.model_user import UserModel
 from src.ui.page_user_ui import Ui_PageUser
 
 
+class MultiFieldFilterProxyModel(QSortFilterProxyModel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.filters = {}
+
+    def set_filter(self, column, text):
+        self.filters[column] = text.lower()
+        self.invalidateFilter()
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        model = self.sourceModel()
+        for column, text in self.filters.items():
+            if text:
+                index = model.index(source_row, column, source_parent)
+                data = str(model.data(index, Qt.ItemDataRole.DisplayRole)).lower()
+                if text not in data:
+                    return False
+        return True
+
+
 class PageUser(QWidget, Ui_PageUser):
     create_new_user_signal = pyqtSignal()
     user_settings_signal = pyqtSignal()
@@ -23,7 +43,7 @@ class PageUser(QWidget, Ui_PageUser):
     def __init__(self, user_model: UserModel, parent=None):
         super(PageUser, self).__init__(parent)
         self.user_model = user_model
-        self.proxy_model = QSortFilterProxyModel()
+        self.proxy_model = MultiFieldFilterProxyModel()
         self.proxy_model.setSourceModel(self.user_model)
 
         self.setupUi(self)
@@ -32,6 +52,7 @@ class PageUser(QWidget, Ui_PageUser):
 
         self.setup_ui()
         self.setup_events()
+        self.setup_filters()
 
     def setup_events(self):
         self.action_create_btn.clicked.connect(self.create_new_user_signal)
@@ -113,8 +134,21 @@ class PageUser(QWidget, Ui_PageUser):
                 selected_ids.append(id_data)
         return sorted(selected_ids)
 
-    # def on_create_btn_clicked(self):
-    #     self.dialog_create = DialogUpdateUser(self)
-    #     self.dialog_create.setWindowTitle("Create user")
-    #     self.dialog_create.accepted_signal = self.create_new_users_signal
-    #     self.dialog_create.exec()
+    def setup_filters(self):
+        filter_widgets = [
+            (self.uid_input, self.user_model.fieldIndex("uid")),
+            (self.note_input, self.user_model.fieldIndex("note")),
+            (self.type_input, self.user_model.fieldIndex("type")),
+            (self.email_input, self.user_model.fieldIndex("email")),
+            (self.email_password_input, self.user_model.fieldIndex("email_password")),
+            (self.group_input, self.user_model.fieldIndex("group")),
+            (self.two_fa_input, self.user_model.fieldIndex("two_fa")),
+            (self.username_input, self.user_model.fieldIndex("username")),
+            (self.password_input, self.user_model.fieldIndex("password")),
+            (self.phone_number_input, self.user_model.fieldIndex("phone_number")),
+        ]
+
+        for widget, column in filter_widgets:
+            widget.textChanged.connect(
+                lambda text, col=column: self.proxy_model.set_filter(col, text)
+            )

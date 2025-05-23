@@ -72,7 +72,9 @@ class BrowserWorker(QRunnable):
                         action_func(page, self.task, self.signals)
 
                 self.signals.succeeded_signal.emit(
-                    self.task, self.raw_proxy, "Succeeded."
+                    self.task,
+                    self.raw_proxy,
+                    "Succeeded.",
                 )
         except Exception as e:
             self.signals.error_signal.emit(self.task, "message")
