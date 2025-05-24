@@ -1,20 +1,66 @@
 # src/views/user/page_user.py
-from typing import List
-
+from typing import List, Any
 from PyQt6.QtWidgets import QWidget, QMenu
-from PyQt6.QtCore import Qt, pyqtSignal, QPoint, QSortFilterProxyModel
+from PyQt6.QtCore import (
+    Qt,
+    pyqtSignal,
+    QPoint,
+    QSortFilterProxyModel,
+    QModelIndex,
+    QVariant,
+)
 from PyQt6.QtGui import QAction
 
-from src.my_types import UserType
 from src.models.model_user import UserModel
 
 from src.ui.page_user_ui import Ui_PageUser
 
 
 class MultiFieldFilterProxyModel(QSortFilterProxyModel):
+    SERIAL_NUMBER_COLUMN_INDEX = 0
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.filters = {}
+
+    def columnCount(self, parent: QModelIndex = QModelIndex()) -> int:
+        return super().columnCount(parent) + 1
+
+    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
+        if not index.isValid():
+            return QVariant()
+        if index.column() == self.SERIAL_NUMBER_COLUMN_INDEX:
+            if role == Qt.ItemDataRole.DisplayRole:
+                return index.row() + 1
+            return QVariant()
+
+        else:
+            source_row = self.mapToSource(index).row()
+            source_column = index.column() - 1
+            source_index = self.sourceModel().index(source_row, source_column)
+            return self.sourceModel().data(source_index, role)
+
+    def headerData(
+        self,
+        section: int,
+        orientation: Qt.Orientation,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ) -> Any:
+        if orientation == Qt.Orientation.Horizontal:
+            if (
+                section == self.SERIAL_NUMBER_COLUMN_INDEX
+                and role == Qt.ItemDataRole.DisplayRole
+            ):
+                return "STT"
+            else:
+                source_section = section - 1
+                return super().headerData(source_section, orientation, role)
+        return super().headerData(section, orientation, role)
+
+    def sort(self, column: int, order: Qt.SortOrder = Qt.SortOrder.AscendingOrder):
+        if column == self.SERIAL_NUMBER_COLUMN_INDEX:
+            return
+        super().sort(column - 1, order)
 
     def set_filter(self, column, text):
         self.filters[column] = text.lower()
@@ -67,8 +113,9 @@ class PageUser(QWidget, Ui_PageUser):
         # self.users_table.setSelectionMode()
         self.users_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.users_table.customContextMenuRequested.connect(self.on_context_menu)
-        self.users_table.setColumnHidden(0, True)
-        self.users_table.setColumnHidden(1, True)
+
+        # self.users_table.setColumnHidden(0, True)
+        # self.users_table.setColumnHidden(1, True)
 
         self.users_table.setEditTriggers(self.users_table.EditTrigger.NoEditTriggers)
 
