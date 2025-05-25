@@ -18,6 +18,7 @@ from src.views.user.dialog_update_user import DialogUpdateUser
 from src.views.user.dialog_create_user import DialogCreateUser
 from src.views.user.dialog_user_settings import DialogUserSettings
 from src.views.user.page_user import PageUser
+from src.views.robot.page_robot import PageRobot
 from src.ui.mainwindow_ui import Ui_MainWindow
 
 
@@ -60,6 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.page_re_product = PageREProduct(self)
         self.page_user = PageUser(self.user_controller.service.model, self)
+        self.page_robot = PageRobot(self.user_controller.service.model, self)
         self.page_user.create_new_user_signal.connect(self.on_create_new_user)
         self.page_user.user_settings_signal.connect(self.on_user_settings)
         self.page_user.updated_users_signal.connect(self.on_updated_users)
@@ -69,16 +71,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.content_container.addWidget(self.page_re_product)
         self.content_container.addWidget(self.page_user)
-        self.content_container.setCurrentIndex(1)
+        self.content_container.addWidget(self.page_robot)
+        self.content_container.setCurrentIndex(2)
 
         self.setup_ui()
+        self.setup_events()
 
     def setup_ui(self):
         pass
 
     def setup_events(self):
-        # self.sidebar_re_btn.clicked.connect(lambda : self.content_container.setCurrentIndex())
-        pass
+        self.sidebar_re_btn.clicked.connect(
+            lambda: self.content_container.setCurrentIndex(0)
+        )
+        self.sidebar_user_btn.clicked.connect(
+            lambda: self.content_container.setCurrentIndex(1)
+        )
+        self.sidebar_robot_btn.clicked.connect(
+            lambda: self.content_container.setCurrentIndex(2)
+        )
 
     @pyqtSlot()
     def data_changed(self):
