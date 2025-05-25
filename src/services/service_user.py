@@ -9,12 +9,14 @@ from src.models.model_user import (
     ListedProductModel,
     UserSettingProxyModel,
     UserSettingUDDModel,
+    UserActionModel,
 )
 from src.my_types import (
     UserType,
     ListedProductType,
     UserSettingProxyType,
     UserSettingUDDType,
+    UserActionType,
 )
 
 
@@ -318,6 +320,30 @@ class UserSettingProxyService(BaseService):
         return super().delete(record_id)
 
     def delete_multiple(self, record_ids):
+        return super().delete_multiple(record_ids)
+
+
+class UserActionService(BaseService):
+    def __init__(self, model: UserActionModel):
+        if not isinstance(model, UserActionModel):
+            raise TypeError(
+                "model must be an instance of UserActionService or its subclass."
+            )
+        super().__init__(model)
+
+    def create(self, payload: UserActionType):
+        return super().create(payload)()
+
+    def read(self, record_id: int) -> UserActionType:
+        return super().read(record_id)
+
+    def read_all(self) -> List[UserActionType]:
+        return super().read_all()
+
+    def delete(self, record_id: int) -> bool:
+        return super().delete(record_id)
+
+    def delete_multiple(self, record_ids: List[int]) -> bool:
         return super().delete_multiple(record_ids)
 
 

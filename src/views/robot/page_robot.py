@@ -1,17 +1,16 @@
 # src/views/robot/page_robot.py
-from typing import Any
+from typing import Any, List
 from PyQt6.QtWidgets import QWidget, QTableView
 from PyQt6.QtCore import (
     Qt,
     pyqtSignal,
-    QModelIndex,
     QSortFilterProxyModel,
-    QVariant,
     pyqtSlot,
     QItemSelection,
 )
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
 
-from src.models.model_user import UserModel
+from src.models.model_user import UserModel, UserActionModel
 from src.ui.page_robot_ui import Ui_PageRobot
 from src.views.robot.action_payload_container import ActionPayloadContainer
 
@@ -21,46 +20,6 @@ class CustomTableModelProxy(QSortFilterProxyModel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.filters = {}
-        self.action_payload_data = {}  # row:value
-
-    def columnCount(self, parent: QModelIndex = QModelIndex()) -> int:
-        """
-        Return the number of columns, including the new STT column
-        """
-        # Return the number of columns from the source model plus 1 for the action_payload column
-        return super().columnCount(parent) + 1
-
-    def data(self, index: QModelIndex, role: int = Qt.ItemDataRole.DisplayRole) -> Any:
-        """
-        Returns the data for the given and role.
-        Provides the action_payload for the virtual column.
-        """
-        # If the index is invalid, return a default QVariant
-        if not index.isValid():
-            return QVariant()
-
-        if index.column() == self.columnCount():
-            if role == Qt.ItemDataRole.DisplayRole:
-                return self.action_payload_data.get(index.row(), "")
-            return QVariant()
-        else:
-            source_row = self.mapToSource(index).row()
-            source_column = index.column()
-            source_index = self.sourceModel().index(source_row, source_column)
-            return self.sourceModel().data(source_index, role)
-
-    def headerData(
-        self,
-        section: int,
-        orientation: Qt.Orientation,
-        role: int = Qt.ItemDataRole.DisplayRole,
-    ) -> Any:
-        if orientation == Qt.Orientation.Horizontal:
-            if section == super().columnCount() and role == Qt.ItemDataRole.DisplayRole:
-                return "action_payload"
-            else:
-                return super().headerData(section, orientation, role)
-        return super().headerData(section, orientation, role)
 
     def sort(self, column: int, order: Qt.SortOrder = Qt.SortOrder.AscendingOrder):
         if column == super().columnCount():
@@ -81,29 +40,25 @@ class CustomTableModelProxy(QSortFilterProxyModel):
                     return False
         return True
 
-    def flags(self, index: QModelIndex) -> Qt.ItemFlag:
-        if not index.isValid():
-            return Qt.ItemFlag.NoItemFlags
-        return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled
-
-    def set_action_payload(self, row: int, value: Any):
-        self.action_payload_data[row] = value
-        left = self.index(row, super().columnCount())
-        right = self.index(row, super().columnCount())
-        self.dataChanged.emit(left, right, [Qt.ItemDataRole.DisplayRole])
-
 
 class PageRobot(QWidget, Ui_PageRobot):
     run_robot_signal = pyqtSignal(dict)
 
-    def __init__(self, user_model: UserModel, parent=None):
+    def __init__(
+        self,
+        user_model: UserModel,
+        user_action_model: UserActionModel,
+        parent=None,
+    ):
         super(PageRobot, self).__init__(parent)
         self.user_model = user_model
         self.proxy_model = CustomTableModelProxy()
         self.proxy_model.setSourceModel(self.user_model)
-        self.robot_table = QTableView()
-        self.selected_user_ids = set()
-        self.action_payload_widgets = []
+        self.user_action_model = user_action_model
+        self.user_table = QTableView()
+        self.user_action_table = QTableView()
+        self.selected_rows = set()
+        self.action_payload_widgets: List[ActionPayloadContainer] = []
 
         self.setupUi(self)
         self.setWindowTitle("Robot")
@@ -113,26 +68,28 @@ class PageRobot(QWidget, Ui_PageRobot):
         self.setup_events()
 
     def setup_ui(self):
-        self.robot_table.setModel(self.proxy_model)
-        self.robot_table.setSortingEnabled(True)
-        # self.robot_table.setSelectionMode(QTableView.SelectionMode.MultiSelection)
-        # self.robot_table.setSelectionBehavior(
-        #     self.robot_table.SelectionBehavior.SelectRows
-        # )
-        self.robot_table_container.layout().addWidget(self.robot_table)
-        self.robot_table.selectionModel().selectionChanged.connect(
+        self.actions_container.setFixedWidth(480)
+        self.user_table.setModel(self.proxy_model)
+        self.user_table.setSortingEnabled(True)
+        self.user_table.setSelectionBehavior(
+            self.user_table.SelectionBehavior.SelectRows
+        )
+        self.robot_table_container.layout().addWidget(self.user_table)
+        self.user_table.selectionModel().selectionChanged.connect(
             self.on_selection_changed
         )
-        self.set_hide_col_in_table()
+        self.user_table.setWordWrap(True)
+        self.set_hide_col_in_user_table()
 
-        self.actions_container.setFixedWidth(480)
+        self.user_action_table.setModel(self.user_action_model)
+        self.robot_table_container.layout().addWidget(self.user_action_table)
 
     def setup_events(self):
         self.action_add_btn.clicked.connect(self.on_add_action_payload_clicked)
         self.action_save_btn.clicked.connect(self.on_save_action_clicked)
         self.action_run_btn.clicked.connect(self.on_run_action_clicked)
 
-    def set_hide_col_in_table(self):
+    def set_hide_col_in_user_table(self):
         for col in range(self.proxy_model.columnCount()):
             col_name = self.proxy_model.headerData(
                 col,
@@ -148,31 +105,21 @@ class PageRobot(QWidget, Ui_PageRobot):
                 "updated_at",
                 "action_payload",
             ]:
-                self.robot_table.setColumnHidden(col, True)
+                self.user_table.setColumnHidden(col, True)
 
     @pyqtSlot(QItemSelection, QItemSelection)
     def on_selection_changed(
         self, selected: QItemSelection, deselected: QItemSelection
     ):
-        id_column_index_in_source = self.user_model.fieldIndex("id")
         selected_indexes = selected.indexes()
         deselected_indexes = deselected.indexes()
+
         for index in selected_indexes:
-            source_index = self.proxy_model.mapToSource(index)
-            source_row = source_index.row()
-            id_index = self.user_model.index(source_row, id_column_index_in_source)
-            self.selected_user_ids.add(self.user_model.data(id_index))
-
+            proxy_row = index.row()
+            self.selected_rows.add(proxy_row)
         for index in deselected_indexes:
-            source_index = self.proxy_model.mapToSource(index)
-            source_row = source_index.row()
-            id_index = self.user_model.index(source_row, id_column_index_in_source)
-            try:
-                self.selected_user_ids.remove(self.user_model.data(id_index))
-            except KeyError:
-                pass
-
-        sorted(self.selected_user_ids)
+            proxy_row = index.row()
+            self.selected_rows.discard(proxy_row)
 
     @pyqtSlot()
     def on_add_action_payload_clicked(self):
@@ -198,8 +145,8 @@ class PageRobot(QWidget, Ui_PageRobot):
     @pyqtSlot()
     def on_save_action_clicked(self):
         actions = []
-
-        print()
+        for action_payload_widget in self.action_payload_widgets:
+            actions.append(action_payload_widget.get_values())
 
     @pyqtSlot()
     def on_run_action_clicked(self):

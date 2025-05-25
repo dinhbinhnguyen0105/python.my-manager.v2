@@ -8,6 +8,7 @@ from src import constants
 from src.my_types import UserType, UserSettingProxyType, UserSettingUDDType
 from src.controllers.controller_user import (
     UserController,
+    UserActionController,
     UserSettingUDDController,
     UserSettingProxyController,
 )
@@ -26,6 +27,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(
         self,
         user_controller: UserController,
+        user_action_controller: UserActionController,
         setting_udd_controller: UserSettingUDDController,
         setting_proxy_controller: UserSettingProxyController,
         robot_controller: RobotController,
@@ -37,6 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setting_proxy_controller = setting_proxy_controller
         self.setting_udd_controller = setting_udd_controller
         self.robot_controller = robot_controller
+        self.user_action_controller = user_action_controller
         for controller in [
             self.user_controller,
             self.setting_proxy_controller,
@@ -61,7 +64,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.page_re_product = PageREProduct(self)
         self.page_user = PageUser(self.user_controller.service.model, self)
-        self.page_robot = PageRobot(self.user_controller.service.model, self)
+        self.page_robot = PageRobot(
+            self.user_controller.service.model,
+            self.user_action_controller.service.model,
+            self,
+        )
         self.page_user.create_new_user_signal.connect(self.on_create_new_user)
         self.page_user.user_settings_signal.connect(self.on_user_settings)
         self.page_user.updated_users_signal.connect(self.on_updated_users)

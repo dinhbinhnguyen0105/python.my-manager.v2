@@ -53,6 +53,16 @@ class UserSettingUDDType:
 
 
 @dataclass
+class UserActionType:
+    id: Optional[int]
+    uid: int
+    action_name: str
+    action_payload: str
+    created_at: Optional[str]
+    updated_at: Optional[str]
+
+
+@dataclass
 class REProductType:
     id: Optional[int]
     pid: Optional[str]

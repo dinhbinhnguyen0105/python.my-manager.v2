@@ -8,18 +8,21 @@ from src.models.model_user import (
     ListedProductModel,
     UserSettingProxyModel,
     UserSettingUDDModel,
+    UserActionModel,
 )
 from src.services.service_user import (
     UserService,
     ListedProductService,
     UserSettingUDDService,
     UserSettingProxyService,
+    UserActionService,
 )
 from src.services.service_robot import RobotService
 from src.controllers.controller_user import (
     UserController,
     UserSettingUDDController,
     UserSettingProxyController,
+    UserActionController,
 )
 from src.controllers.controller_robot import RobotController
 
@@ -36,28 +39,32 @@ class Application:
         self.user_setting_udd_model = UserSettingUDDModel()
         self.user_setting_proxy_model = UserSettingProxyModel()
         self.listed_product_model = ListedProductModel()
+        self.user_action_model = UserActionModel()
 
         self.user_service = UserService(self.user_model)
+        self.user_action_service = UserActionService(self.user_action_model)
         self.user_setting_proxy_service = UserSettingProxyService(
             self.user_setting_proxy_model
         )
-        self.user_Setting_udd_service = UserSettingUDDService(
+        self.user_setting_udd_service = UserSettingUDDService(
             self.user_setting_udd_model
         )
         self.listed_product_service = ListedProductService(self.listed_product_model)
 
         self.user_controller = UserController(self.user_service)
+        self.user_action_controller = UserActionController(self.user_action_service)
         self.user_setting_proxy_controller = UserSettingProxyController(
             self.user_setting_proxy_service
         )
         self.user_setting_udd_controller = UserSettingUDDController(
-            self.user_Setting_udd_service
+            self.user_setting_udd_service
         )
 
         self.robot_controller = RobotController(
             self.user_service,
             self.user_setting_proxy_service,
-            self.user_Setting_udd_service,
+            self.user_setting_udd_service,
+            self.user_action_service,
         )
 
         self.mainWindow = MainWindow(
@@ -65,6 +72,7 @@ class Application:
             setting_udd_controller=self.user_setting_udd_controller,
             setting_proxy_controller=self.user_setting_proxy_controller,
             robot_controller=self.robot_controller,
+            user_action_controller=self.user_action_controller,
         )
         self.mainWindow.show()
         print("My manager application is running ...")

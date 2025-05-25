@@ -8,9 +8,15 @@ from src.services.service_user import (
     UserService,
     UserSettingProxyService,
     UserSettingUDDService,
+    UserActionService,
 )
 from src.services.check_live import CheckLive
-from src.my_types import UserType, UserSettingUDDType, UserSettingProxyType
+from src.my_types import (
+    UserType,
+    UserSettingUDDType,
+    UserSettingProxyType,
+    UserActionType,
+)
 
 
 class UserController(BaseController):
@@ -160,6 +166,83 @@ class UserController(BaseController):
     @pyqtSlot()
     def check_live_all_tasks_finished(self):
         self.operation_success_signal.emit("User active status check completed.")
+
+
+class UserActionController(BaseController):
+    def __init__(self, service: UserActionService, parent=None):
+        super().__init__(service, parent)
+        self.service = service
+
+    def handle_add_action(self, action_data: UserActionType):
+        try:
+            if not isinstance(action_data, UserActionType):
+                raise TypeError(f"Expected UserActionType, got {type(action_data)}")
+            if not self.service.create(action_data):
+                # TODO emit to message box (failed signal)
+                return False
+            else:
+                # TODO emit to message box (succeed signal)
+                return True
+        except Exception as e:
+            print(f"[{self.__class__.__name__}.handle_add_action] Error: {e}")
+            # TODO emit to message box (error signal)
+            return False
+
+    def handle_read_action(self, record_id: int) -> UserActionType:
+        action_data: Optional[UserActionType] = None
+        try:
+            action_data = self.service.read(record_id)
+            if not action_data:
+                # TODO emit to message box (info signal)
+                return None
+            return action_data
+        except Exception as e:
+            print(f"[{self.__class__.__name__}.handle_read_action] Error: {e}")
+            # TODO emit to message box (error signal)
+            return action_data
+
+    def handle_update_action(self, record_id: int, action_data: UserActionType) -> bool:
+        try:
+            if not isinstance(action_data, UserActionType):
+                raise TypeError(f"Expected UserActionType, got {type(action_data)}.")
+            if not self.service.update(record_id, action_data):
+                # TODO emit to message box (info message)
+                return False
+            else:
+                # TODO emit to message box (succeed message)
+                return True
+        except Exception as e:
+            print(f"[{self.__class__.__name__}.handle_update_user] Error: {e}")
+            # TODO emit to message box (error signal)
+            return False
+
+    def handle_delete_action(self, record_id: int) -> bool:
+        try:
+            if not self.service.delete(record_id):
+                # TODO emit to message box (info message)
+                return False
+            else:
+                # TODO emit to message box (succeed message)
+                return True
+        except Exception as e:
+            print(f"[{self.__class__.__name__}.handle_delete_action] Error: {e}")
+            # TODO emit to message box (error signal)
+            return False
+
+    def handle_multiple_delete_action(self, record_ids: List[int]) -> bool:
+        try:
+            if not self.service.delete_multiple(record_ids):
+                # TODO emit to message box (info message)
+                return False
+            else:
+                # TODO emit to message box (succeed message)
+                return True
+        except Exception as e:
+            print(
+                f"[{self.__class__.__name__}.handle_multiple_delete_action] Error: {e}"
+            )
+            # TODO emit to message box (error signal)
+            return False
 
 
 class UserSettingUDDController(BaseController):

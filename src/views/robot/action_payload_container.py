@@ -31,7 +31,11 @@ class ActionPayloadContainer(QWidget, Ui_ActionPayloadContainer):
     def on_action_name_changed(self, index: int):
         is_interaction = self.action_name.itemData(index) == "interaction"
         self.action_payload.setHidden(is_interaction)
-        self.pid_input.setHidden(is_interaction)
+        self.pid_input.setHidden(
+            is_interaction
+            or self.action_payload.itemData(self.action_payload.currentIndex())
+            == "random_pid"
+        )
         if is_interaction:
             self.pid_input.clear()
 
@@ -44,8 +48,10 @@ class ActionPayloadContainer(QWidget, Ui_ActionPayloadContainer):
 
     def get_values(self):
         result = {
-            "action_name": self.action_name.itemData(),
-            "action_payload": self.action_payload.itemData(),
+            "action_name": self.action_name.itemData(self.action_name.currentIndex()),
+            "action_payload": self.action_payload.itemData(
+                self.action_payload.currentIndex()
+            ),
         }
         if self.pid_input.isVisible():
             result["pid"] = self.pid_input.text().strip()

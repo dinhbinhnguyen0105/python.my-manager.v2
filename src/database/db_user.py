@@ -32,6 +32,16 @@ CREATE TABLE IF NOT EXISTS {constants.TABLE_LISTED_PRODUCT} (
     updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
 )
 """
+SQL_CREATE_ACTION_TABLE = f"""
+CREATE TABLE IF NOT EXISTS {constants.TABLE_ROBOT_ACTION} (
+    id INTEGER PRIMARY KEY,
+    uid INTEGER REFERENCES {constants.TABLE_USER}(uid),
+    action_name TEXT,
+    action_payload TEXT,
+    created_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now')),
+    updated_at TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now'))
+)
+"""
 SQL_CREATE_USER_SETTING_UDD_TABLE = f"""
 CREATE TABLE IF NOT EXISTS {constants.TABLE_USER_SETTING_UDD} (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,6 +82,7 @@ def initialize_db_user():
                 SQL_CREATE_USER_TABLE,
                 SQL_CREATE_USER_SETTING_UDD_TABLE,
                 SQL_CREATE_USER_SETTING_PROXY_TABLE,
+                SQL_CREATE_ACTION_TABLE,
             ]:
                 if not query.exec(sql):
                     error_msg = f"[initialize_db_user] An error occurred while creating table: {query.lastError().text()}"

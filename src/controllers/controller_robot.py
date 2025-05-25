@@ -11,6 +11,7 @@ from src.services.service_user import (
     UserService,
     UserSettingProxyService,
     UserSettingUDDService,
+    UserActionService,
 )
 
 
@@ -20,6 +21,7 @@ class RobotController(BaseController):
         service: UserService,
         proxy_service: UserSettingProxyService,
         udd_service: UserSettingUDDService,
+        user_action_service: UserActionService,
         parent=None,
     ):
         super().__init__(service, parent)
@@ -27,6 +29,7 @@ class RobotController(BaseController):
         self._current_task_progress: Optional[RobotService] = None
         self.proxy_service = proxy_service
         self.udd_service = udd_service
+        self.user_action_service = user_action_service
 
     def handle_launch_browser(
         self, record_ids: List[int], headless: bool, is_mobile: bool
