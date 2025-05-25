@@ -358,7 +358,7 @@ QPushButton {
          <number>8</number>
         </property>
         <item>
-         <layout class="QVBoxLayout" name="actions_container_layout_2">
+         <layout class="QVBoxLayout" name="actions_container_layout">
           <property name="spacing">
            <number>4</number>
           </property>
@@ -366,7 +366,17 @@ QPushButton {
            <number>0</number>
           </property>
           <item>
-           <spacer name="verticalSpacer">
+           <layout class="QVBoxLayout" name="action_payload_container_layout"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="action_add_btn">
+            <property name="text">
+             <string>Add action</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="action_payload_hover">
             <property name="orientation">
              <enum>Qt::Orientation::Vertical</enum>
             </property>

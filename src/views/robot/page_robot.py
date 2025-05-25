@@ -13,6 +13,7 @@ from PyQt6.QtCore import (
 
 from src.models.model_user import UserModel
 from src.ui.page_robot_ui import Ui_PageRobot
+from src.views.robot.action_payload_container import ActionPayloadContainer
 
 
 class CustomTableModelProxy(QSortFilterProxyModel):
@@ -93,7 +94,7 @@ class CustomTableModelProxy(QSortFilterProxyModel):
 
 
 class PageRobot(QWidget, Ui_PageRobot):
-    signal = pyqtSignal()
+    run_robot_signal = pyqtSignal(dict)
 
     def __init__(self, user_model: UserModel, parent=None):
         super(PageRobot, self).__init__(parent)
@@ -101,16 +102,20 @@ class PageRobot(QWidget, Ui_PageRobot):
         self.proxy_model = CustomTableModelProxy()
         self.proxy_model.setSourceModel(self.user_model)
         self.robot_table = QTableView()
+        self.selected_user_ids = set()
+        self.action_payload_widgets = []
 
         self.setupUi(self)
         self.setWindowTitle("Robot")
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
 
         self.setup_ui()
+        self.setup_events()
 
     def setup_ui(self):
         self.robot_table.setModel(self.proxy_model)
         self.robot_table.setSortingEnabled(True)
+        # self.robot_table.setSelectionMode(QTableView.SelectionMode.MultiSelection)
         # self.robot_table.setSelectionBehavior(
         #     self.robot_table.SelectionBehavior.SelectRows
         # )
@@ -118,14 +123,85 @@ class PageRobot(QWidget, Ui_PageRobot):
         self.robot_table.selectionModel().selectionChanged.connect(
             self.on_selection_changed
         )
+        self.set_hide_col_in_table()
+
+        self.actions_container.setFixedWidth(480)
+
+    def setup_events(self):
+        self.action_add_btn.clicked.connect(self.on_add_action_payload_clicked)
+        self.action_save_btn.clicked.connect(self.on_save_action_clicked)
+        self.action_run_btn.clicked.connect(self.on_run_action_clicked)
+
+    def set_hide_col_in_table(self):
+        for col in range(self.proxy_model.columnCount()):
+            col_name = self.proxy_model.headerData(
+                col,
+                Qt.Orientation.Horizontal,
+                Qt.ItemDataRole.DisplayRole,
+            )
+            if col_name not in [
+                "uid",
+                "username",
+                "note",
+                "type",
+                "user_group",
+                "updated_at",
+                "action_payload",
+            ]:
+                self.robot_table.setColumnHidden(col, True)
 
     @pyqtSlot(QItemSelection, QItemSelection)
     def on_selection_changed(
         self, selected: QItemSelection, deselected: QItemSelection
     ):
-        selected_rows_proxy_indices = self.robot_table.selectionModel().selectedRows()
-
-        # Get the IDs of the selected users
-        selected_user_ids = []
         id_column_index_in_source = self.user_model.fieldIndex("id")
-        print(selected_rows_proxy_indices)
+        selected_indexes = selected.indexes()
+        deselected_indexes = deselected.indexes()
+        for index in selected_indexes:
+            source_index = self.proxy_model.mapToSource(index)
+            source_row = source_index.row()
+            id_index = self.user_model.index(source_row, id_column_index_in_source)
+            self.selected_user_ids.add(self.user_model.data(id_index))
+
+        for index in deselected_indexes:
+            source_index = self.proxy_model.mapToSource(index)
+            source_row = source_index.row()
+            id_index = self.user_model.index(source_row, id_column_index_in_source)
+            try:
+                self.selected_user_ids.remove(self.user_model.data(id_index))
+            except KeyError:
+                pass
+
+        sorted(self.selected_user_ids)
+
+    @pyqtSlot()
+    def on_add_action_payload_clicked(self):
+        action_payload = ActionPayloadContainer()
+        self.action_payload_container_layout.addWidget(action_payload)
+        self.action_payload_widgets.append(action_payload)
+        action_payload.action_delete_btn.clicked.connect(
+            lambda: self.on_delete_action_payload_clicked(
+                len(self.action_payload_widgets) - 1,
+                action_payload,
+            )
+        )
+
+    @pyqtSlot(int, ActionPayloadContainer)
+    def on_delete_action_payload_clicked(
+        self,
+        index,
+        action_payload_widget: ActionPayloadContainer,
+    ):
+        self.action_payload_widgets.pop(index)
+        action_payload_widget.deleteLater()
+
+    @pyqtSlot()
+    def on_save_action_clicked(self):
+        actions = []
+
+        print()
+
+    @pyqtSlot()
+    def on_run_action_clicked(self):
+
+        print()

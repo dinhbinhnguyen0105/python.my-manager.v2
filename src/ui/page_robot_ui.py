@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '/Users/ndb/Dev/python/python.my-manager.v2/ui/page_robot.ui'
+# Form implementation generated from reading ui file '/Volumes/KINGSTON/Dev/python/python.my-manager.v2/ui/page_robot.ui'
 #
 # Created by: PyQt6 UI code generator 6.9.0
 #
@@ -171,12 +171,18 @@ class Ui_PageRobot(object):
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.actions_container)
         self.verticalLayout_3.setContentsMargins(8, 8, 8, 8)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.actions_container_layout_2 = QtWidgets.QVBoxLayout()
-        self.actions_container_layout_2.setContentsMargins(-1, -1, -1, 0)
-        self.actions_container_layout_2.setSpacing(4)
-        self.actions_container_layout_2.setObjectName("actions_container_layout_2")
+        self.actions_container_layout = QtWidgets.QVBoxLayout()
+        self.actions_container_layout.setContentsMargins(-1, -1, -1, 0)
+        self.actions_container_layout.setSpacing(4)
+        self.actions_container_layout.setObjectName("actions_container_layout")
+        self.action_payload_container_layout = QtWidgets.QVBoxLayout()
+        self.action_payload_container_layout.setObjectName("action_payload_container_layout")
+        self.actions_container_layout.addLayout(self.action_payload_container_layout)
+        self.action_add_btn = QtWidgets.QPushButton(parent=self.actions_container)
+        self.action_add_btn.setObjectName("action_add_btn")
+        self.actions_container_layout.addWidget(self.action_add_btn)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
-        self.actions_container_layout_2.addItem(spacerItem1)
+        self.actions_container_layout.addItem(spacerItem1)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.action_save_btn = QtWidgets.QPushButton(parent=self.actions_container)
@@ -185,8 +191,8 @@ class Ui_PageRobot(object):
         self.action_run_btn = QtWidgets.QPushButton(parent=self.actions_container)
         self.action_run_btn.setObjectName("action_run_btn")
         self.horizontalLayout_9.addWidget(self.action_run_btn)
-        self.actions_container_layout_2.addLayout(self.horizontalLayout_9)
-        self.verticalLayout_3.addLayout(self.actions_container_layout_2)
+        self.actions_container_layout.addLayout(self.horizontalLayout_9)
+        self.verticalLayout_3.addLayout(self.actions_container_layout)
         self.container_layout.addWidget(self.actions_container)
         self.horizontalLayout_2.addLayout(self.container_layout)
 
@@ -200,5 +206,6 @@ class Ui_PageRobot(object):
         self.group_label_2.setText(_translate("PageRobot", "Group"))
         self.note_label_2.setText(_translate("PageRobot", "Note"))
         self.type_label_2.setText(_translate("PageRobot", "Type"))
+        self.action_add_btn.setText(_translate("PageRobot", "Add action"))
         self.action_save_btn.setText(_translate("PageRobot", "Save"))
         self.action_run_btn.setText(_translate("PageRobot", "Run"))

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>action_payload_container</class>
- <widget class="QWidget" name="action_payload_container">
+ <class>ActionPayloadContainer</class>
+ <widget class="QWidget" name="ActionPayloadContainer">
   <property name="geometry">
    <rect>
     <x>0</x>

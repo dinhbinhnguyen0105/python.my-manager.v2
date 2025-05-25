@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '/Users/ndb/Dev/python/python.my-manager.v2/ui/action_payload.ui'
+# Form implementation generated from reading ui file '/Volumes/KINGSTON/Dev/python/python.my-manager.v2/ui/action_payload.ui'
 #
 # Created by: PyQt6 UI code generator 6.9.0
 #
@@ -9,11 +9,11 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_action_payload_container(object):
-    def setupUi(self, action_payload_container):
-        action_payload_container.setObjectName("action_payload_container")
-        action_payload_container.resize(489, 40)
-        action_payload_container.setStyleSheet("#Dialog_User{\n"
+class Ui_ActionPayloadContainer(object):
+    def setupUi(self, ActionPayloadContainer):
+        ActionPayloadContainer.setObjectName("ActionPayloadContainer")
+        ActionPayloadContainer.resize(489, 40)
+        ActionPayloadContainer.setStyleSheet("#Dialog_User{\n"
 "  font-family: \"Courier New\";\n"
 "  background-color: #FFFFFF;\n"
 "}\n"
@@ -63,44 +63,44 @@ class Ui_action_payload_container(object):
 "QCheckBox{\n"
 "  color: #212529;\n"
 "}")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(action_payload_container)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(ActionPayloadContainer)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setSpacing(0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.action_name = QtWidgets.QComboBox(parent=action_payload_container)
+        self.action_name = QtWidgets.QComboBox(parent=ActionPayloadContainer)
         self.action_name.setObjectName("action_name")
         self.action_name.addItem("")
         self.action_name.addItem("")
         self.action_name.addItem("")
         self.horizontalLayout.addWidget(self.action_name)
-        self.action_payload = QtWidgets.QComboBox(parent=action_payload_container)
+        self.action_payload = QtWidgets.QComboBox(parent=ActionPayloadContainer)
         self.action_payload.setObjectName("action_payload")
         self.action_payload.addItem("")
         self.action_payload.addItem("")
         self.horizontalLayout.addWidget(self.action_payload)
-        self.pid_input = QtWidgets.QLineEdit(parent=action_payload_container)
+        self.pid_input = QtWidgets.QLineEdit(parent=ActionPayloadContainer)
         self.pid_input.setMinimumSize(QtCore.QSize(120, 0))
         self.pid_input.setStyleSheet("margin: 0 4px;")
         self.pid_input.setObjectName("pid_input")
         self.horizontalLayout.addWidget(self.pid_input)
-        self.action_delete_btn = QtWidgets.QPushButton(parent=action_payload_container)
+        self.action_delete_btn = QtWidgets.QPushButton(parent=ActionPayloadContainer)
         self.action_delete_btn.setStyleSheet("")
         self.action_delete_btn.setObjectName("action_delete_btn")
         self.horizontalLayout.addWidget(self.action_delete_btn)
         self.horizontalLayout_2.addLayout(self.horizontalLayout)
 
-        self.retranslateUi(action_payload_container)
-        QtCore.QMetaObject.connectSlotsByName(action_payload_container)
+        self.retranslateUi(ActionPayloadContainer)
+        QtCore.QMetaObject.connectSlotsByName(ActionPayloadContainer)
 
-    def retranslateUi(self, action_payload_container):
+    def retranslateUi(self, ActionPayloadContainer):
         _translate = QtCore.QCoreApplication.translate
-        action_payload_container.setWindowTitle(_translate("action_payload_container", "Form"))
-        self.action_name.setItemText(0, _translate("action_payload_container", "List on group"))
-        self.action_name.setItemText(1, _translate("action_payload_container", "List on marketplace"))
-        self.action_name.setItemText(2, _translate("action_payload_container", "Interaction"))
-        self.action_payload.setItemText(0, _translate("action_payload_container", "Random"))
-        self.action_payload.setItemText(1, _translate("action_payload_container", "PID"))
-        self.action_delete_btn.setText(_translate("action_payload_container", "Delete"))
+        ActionPayloadContainer.setWindowTitle(_translate("ActionPayloadContainer", "Form"))
+        self.action_name.setItemText(0, _translate("ActionPayloadContainer", "List on group"))
+        self.action_name.setItemText(1, _translate("ActionPayloadContainer", "List on marketplace"))
+        self.action_name.setItemText(2, _translate("ActionPayloadContainer", "Interaction"))
+        self.action_payload.setItemText(0, _translate("ActionPayloadContainer", "Random"))
+        self.action_payload.setItemText(1, _translate("ActionPayloadContainer", "PID"))
+        self.action_delete_btn.setText(_translate("ActionPayloadContainer", "Delete"))
